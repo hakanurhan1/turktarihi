@@ -1,0 +1,1005 @@
+import React, { useState, useEffect } from 'react';
+import { Book, Clock, Users, HelpCircle, ChevronRight, X, Scroll, Award, RotateCcw, ChevronDown, Sword, Crown, Map, Sparkles, Scale, Coins, Feather, Shield, Palette, Tent, Trees, Quote, Landmark, Flag, Star, ImageOff } from 'lucide-react';
+
+// --- İKONLAR VE MOTİFLER ---
+
+const SeljukStar = ({ className = "w-6 h-6", color = "text-teal-600" }) => (
+  <svg viewBox="0 0 24 24" className={`${className} ${color} fill-current`} style={{ opacity: 0.9 }}>
+    <path d="M12 0L14.8 9.2L24 12L14.8 14.8L12 24L9.2 14.8L0 12L9.2 9.2L12 0Z" />
+    <circle cx="12" cy="12" r="3" className="fill-white opacity-30" />
+  </svg>
+);
+
+const KayiSymbol = ({ className = "w-8 h-8", color = "text-gray-200" }) => (
+  <div className={`flex gap-1.5 items-center justify-center font-serif font-bold ${className} ${color} select-none opacity-80`}>
+    <div className="w-1.5 h-8 bg-current rounded-full shadow-sm"></div>
+    <div className="w-1.5 h-5 bg-current rounded-full rotate-45 origin-bottom shadow-sm"></div>
+    <div className="w-1.5 h-8 bg-current rounded-full shadow-sm"></div>
+  </div>
+);
+
+// --- EKLENEN HALI MOTİFLERİ (SVG TASARIMLAR - GARANTİ GÖRÜNÜM) ---
+
+const MotifEliBelinde = ({ className }) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    <path d="M50 20 L70 40 L50 60 L30 40 Z" fill="currentColor" opacity="0.8"/>
+    <path d="M30 40 L10 20 M70 40 L90 20 M50 60 L50 90" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+    <circle cx="50" cy="30" r="5" fill="white" />
+  </svg>
+);
+
+const MotifKocBoynuzu = ({ className }) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    <path d="M20 40 C20 10, 50 10, 50 40 C50 70, 80 70, 80 40" stroke="currentColor" strokeWidth="12" fill="none" strokeLinecap="round" />
+    <path d="M20 60 C20 90, 50 90, 50 60 C50 30, 80 30, 80 60" stroke="currentColor" strokeWidth="12" fill="none" strokeLinecap="round" opacity="0.6"/>
+  </svg>
+);
+
+const MotifGeyik = ({ className }) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    <path d="M30 70 L50 70 L50 40 L30 40 Z" fill="currentColor" />
+    <path d="M50 40 L70 20 M50 40 L30 20" stroke="currentColor" strokeWidth="6" />
+    <path d="M70 20 L80 30 M70 20 L80 10 M30 20 L20 30 M30 20 L20 10" stroke="currentColor" strokeWidth="4" />
+    <circle cx="40" cy="50" r="3" fill="white" />
+  </svg>
+);
+
+const MotifHayatAgaci = ({ className }) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    <path d="M50 90 L50 10" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <path d="M50 70 L80 50 M50 50 L80 30 M50 70 L20 50 M50 50 L20 30" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <circle cx="50" cy="10" r="6" fill="currentColor" />
+    <circle cx="80" cy="50" r="4" fill="currentColor" opacity="0.6" />
+    <circle cx="20" cy="50" r="4" fill="currentColor" opacity="0.6" />
+  </svg>
+);
+
+// Dekoratif Arka Plan Deseni
+const BackgroundPattern = () => (
+  <div className="fixed inset-0 z-0 pointer-events-none">
+    {/* Renkli Degrade Arka Plan */}
+    <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-red-50 to-teal-50 opacity-60"></div>
+    {/* Desen */}
+    <div className="absolute inset-0 opacity-[0.07]" 
+         style={{ 
+           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d97706' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` 
+         }}>
+    </div>
+  </div>
+);
+
+// --- VERİ SETLERİ ---
+
+const historicQuotes = [
+  { text: "Türk Oğuz Beyleri, milleti, işitin! Üstte mavi gök çökmedikçe, altta yağız yer delinmedikçe, senin ilini ve töreni kim bozabilir?", author: "Bilge Kağan" },
+  { text: "Benden eğerimi isteyin vereyim, atımı isteyin vereyim, çadırımı isteyin vereyim... Fakat vatanımdan hiç kimse bir karış toprak istemesin!", author: "Mete Han" },
+  { text: "Size öyle bir vatan bıraktım ki, ebediyen sizin olacaktır.", author: "Sultan Alparslan" },
+  { text: "İmkanın sınırını görmek için imkansızı denemek lazım.", author: "Fatih Sultan Mehmet" },
+  { text: "Muhtaç olduğun kudret, damarlarındaki asil kanda mevcuttur!", author: "Mustafa Kemal Atatürk" },
+  { text: "Halk içinde muteber bir nesne yok devlet gibi, olmaya devlet cihanda bir nefes sıhhat gibi.", author: "Kanuni Sultan Süleyman" },
+  { text: "Bir çivi bir nalı, bir nal bir tırnağı, bir tırnak bir ayağı, bir ayak bir atı, bir at bir kumandanı, bir kumandan bir vatanı mahvedebilir.", author: "Cengiz Han" },
+  { text: "Ey Türk Gençliği! Birinci vazifen, Türk istiklâlini, Türk Cumhuriyetini, ilelebet, muhafaza ve müdafaa etmektir.", author: "Mustafa Kemal Atatürk" }
+];
+
+const periods = [
+  {
+    id: 1,
+    title: "Orta Asya ve İslam Öncesi",
+    years: "M.Ö. 220 - M.S. 940",
+    shortDesc: "Bozkır kültürü, Şamanizm (Gök Tanrı), Hunlar ve Göktürkler.",
+    details: {
+      military: "Mete Han tarafından kurulan 'Onlu Sistem' günümüz kara kuvvetlerinin temelidir. 'Turan Taktiği' (Sahte Ricat/Hilal) ile sayıca üstün ordular yenilmiştir.",
+      governance: "Devlet 'İkili Teşkilat' (Doğu-Batı) ile yönetilirdi. Kut İnancı hakimdi. Kararlar 'Toy'da (Kurultay) alınırdı.",
+      culture: "Şamanizm (Gök Tanrı) inancı doğa ile iç içeydi. Yuğ törenleri yapılırdı. Pazırık Halısı bu dönemin en önemli sanat eseridir. Göçebe yaşam tarzı kilim motiflerine yansımıştır.",
+      states: ["Asya Hun", "Avrupa Hun", "I. ve II. Göktürk", "Uygur", "Hazarlar"],
+      importance: "Kavimler Göçü'nü başlatarak Avrupa'nın etnik yapısını değiştirdiler. Halı dokumacılığı ve demir işlemeciliğinde zirveye çıktılar."
+    },
+    gradient: "from-teal-600 to-teal-800",
+    iconColor: "bg-teal-100 text-teal-700"
+  },
+  {
+    id: 2,
+    title: "Türk-İslam ve Selçuklular",
+    years: "940 - 1299",
+    shortDesc: "İslamiyet'in kabulü, Karahanlılar, Gazneliler ve Büyük Selçuklu Devleti.",
+    details: {
+      military: "Talas Savaşı (751) ile Türk-Arap yakınlaşması başladı. Gulam sistemi (devşirme benzeri) ve İkta sistemi (toprağa dayalı askerlik) uygulandı. 1071 Malazgirt Zaferi ile Anadolu'nun kapıları Türklere açıldı.",
+      governance: "Hükümdarlar 'Sultan' veya 'Han' unvanı kullandı. Şeri ve Örfi hukuk bir arada uygulandı. Tuğrul Bey döneminde İslam dünyasının siyasi liderliği Türklere geçti.",
+      culture: "Karahanlılar döneminde ilk Türk-İslam eserleri verildi (Kutadgu Bilig, Divan-ı Lügati't-Türk). Nizamiye Medreseleri (Büyük Selçuklu) ile eğitim kurumsallaştı. Ahilik teşkilatı Anadolu'da esnaf dayanışmasını sağladı.",
+      states: ["Karahanlılar (Orta Asya'da ilk Müslüman Türk devleti)", "Gazneliler", "Büyük Selçuklu Devleti", "Anadolu Selçuklu Devleti", "Harzemşahlar"],
+      importance: "Türk kültürü ile İslam medeniyeti sentezlendi. Haçlı Seferlerine karşı İslam dünyası korundu."
+    },
+    gradient: "from-blue-600 to-blue-900",
+    iconColor: "bg-blue-100 text-blue-700"
+  },
+  {
+    id: 3,
+    title: "Osmanlı İmparatorluğu",
+    years: "1299 - 1922",
+    shortDesc: "Üç kıtaya hükmeden, 600 yıllık cihan imparatorluğu.",
+    details: {
+      military: "Dünyanın ilk daimi ordularından Yeniçeri Ocağı kuruldu. Tımar sistemi ile hazineden para çıkmadan devasa bir süvari ordusu (Tımarlı Sipahi) beslendi. Fatih döneminde 'Şahi' topları döküldü.",
+      governance: "Mutlak monarşi ile yönetildi. Divan-ı Hümayun devlet işlerinin görüşüldüğü yerdi. 'Millet Sistemi' ile gayrimüslimler inançlarına göre yönetildi, bu sayede çok uluslu yapı yüzyıllarca korundu.",
+      culture: "Mimar Sinan ile klasik Osmanlı mimarisi zirveye ulaştı (Selimiye, Süleymaniye). Divan edebiyatı, Hat, Tezhip ve Minyatür sanatları gelişti. Enderun Mektebi ile devlet adamı yetiştirildi.",
+      states: ["Kuruluş (1299-1453)", "Yükselme (1453-1579)", "Duraklama (1579-1699)", "Gerileme (1699-1792)", "Dağılma (1792-1922)"],
+      importance: "İstanbul'un fethi ile Orta Çağ kapandı. Halifelik Türklere geçti. İpek ve Baharat yolları denetim altına alındı."
+    },
+    gradient: "from-red-700 to-rose-900",
+    iconColor: "bg-red-100 text-red-700"
+  },
+  {
+    id: 4,
+    title: "Türkiye Cumhuriyeti",
+    years: "1923 - Günümüz",
+    shortDesc: "Kurtuluş Savaşı sonrası kurulan modern, laik ve sosyal hukuk devleti.",
+    details: {
+      military: "Düzenli Ordu ile Kurtuluş Savaşı kazanıldı (I. ve II. İnönü, Sakarya, Büyük Taarruz). 1952'de NATO'ya üye olundu. 1974 Kıbrıs Barış Harekatı gerçekleştirildi. Günümüzde yerli savunma sanayii (İHA/SİHA) ile bölgesel güç konumundadır.",
+      governance: "Egemenlik kayıtsız şartsız milletindir. Saltanat ve Halifelik kaldırıldı. Kadınlara seçme ve seçilme hakkı (1934) verildi. Çok partili hayata geçiş (1946) ile demokrasi güçlendi.",
+      culture: "Harf İnkılabı, Medeni Kanun ve Tevhid-i Tedrisat (Eğitim Birliği) ile modernleşme sağlandı. Tarih ve Dil Kurumları kurularak milli bilince önem verildi.",
+      states: ["Tek Parti Dönemi (1923-1946)", "Çok Partili Dönem", "Askeri Darbeler ve Müdahaleler", "2000'ler ve Yeni Türkiye"],
+      importance: "Emperyalizme karşı kazanılan Kurtuluş Savaşı, sömürge altındaki milletlere örnek olmuştur. İslam dünyasındaki tek laik ve demokratik cumhuriyet modelidir."
+    },
+    gradient: "from-red-500 to-red-700",
+    iconColor: "bg-rose-100 text-rose-600"
+  }
+];
+
+const epics = [
+  { name: "Oğuz Kağan", desc: "Türklerin atası Oğuz Han'ın doğumu, yaşamı ve Türk boylarını teşkilatlandırması.", color: "bg-amber-100 text-amber-800 border-amber-200" },
+  { name: "Ergenekon", desc: "Türklerin demir bir dağı eriterek yok olmaktan kurtulup tekrar dünyaya yayılmaları.", color: "bg-slate-100 text-slate-800 border-slate-200" },
+  { name: "Türeyiş", desc: "Uygurların kökenini ve kurdun yol göstericiliğini anlatır.", color: "bg-blue-100 text-blue-800 border-blue-200" },
+  { name: "Manas", desc: "Kırgızlara ait, dünyanın en uzun destanıdır.", color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
+  { name: "Dede Korkut", desc: "Oğuz Türklerinin sosyal hayatını, inançlarını ve kahramanlıklarını anlatan hikayeler bütünü.", color: "bg-orange-100 text-orange-800 border-orange-200" }
+];
+
+const leaders = [
+  { name: "Teoman Han", title: "Asya Hun Kurucusu", dates: "M.Ö. 220 - 209", desc: "Bilinen ilk Türk devleti olan Asya Hun Devleti'nin kurucusu ve ilk hükümdarıdır.", imgSymbol: "🏹", gradient: "from-stone-500 to-stone-700", category: "ruler" },
+  { name: "Mete Han", title: "Asya Hun Hükümdarı", dates: "M.Ö. 209 - 174", desc: "Babasını tahttan indirerek kağan oldu. Türk kara kuvvetlerinin temeli sayılan 'Onlu Sistemi' kurdu. Çin'i vergiye bağladı. İlk kez Türk siyasi birliğini sağladı.", imgSymbol: "🐺", gradient: "from-orange-400 to-amber-600", category: "ruler" },
+  { name: "Attila", title: "Avrupa Hun İmparatoru", dates: "406 - 453", desc: "Batı dünyasında 'Tanrı'nın Kırbacı' olarak bilinir. Roma İmparatorluğu'na diz çöktürmüştür.", imgSymbol: "⚔️", gradient: "from-red-800 to-black", category: "ruler" },
+  { name: "Bumin Kağan", title: "Göktürk Hakanı", dates: "? - 552", desc: "I. Göktürk Devleti'nin kurucusudur. Türk adıyla kurulan ilk devletin başıdır.", imgSymbol: "🏔️", gradient: "from-cyan-600 to-blue-800", category: "ruler" },
+  { name: "Bilge Kağan", title: "Göktürk Hakanı", dates: "683 - 734", desc: "Orhun Abideleri'ni diktirerek Türk tarihinin ilk yazılı nutkunu bıraktı. Milleti için gece uyumadı, gündüz oturmadı.", imgSymbol: "📜", gradient: "from-cyan-500 to-blue-600", category: "ruler" },
+  { name: "Satuk Buğra Han", title: "Karahanlı Hükümdarı", dates: "901 - 955", desc: "İslamiyet'i kabul eden ilk Türk hükümdarlarındandır. Müslüman olduktan sonra 'Abdülkerim' adını almıştır.", imgSymbol: "🕌", gradient: "from-emerald-600 to-teal-800", category: "ruler" },
+  { name: "Sultan Alparslan", title: "Büyük Selçuklu Sultanı", dates: "1029 - 1072", desc: "Malazgirt Zaferi (1071) ile Anadolu'nun kapılarını Türklere açtı. Adaletli yönetimiyle tanınır.", imgSymbol: "🦁", gradient: "from-teal-400 to-teal-600", category: "ruler" },
+  { name: "Melikşah", title: "Büyük Selçuklu Sultanı", dates: "1055 - 1092", desc: "Büyük Selçuklu Devleti'nin en parlak ve en geniş sınırlarına ulaştığı dönemin sultanıdır.", imgSymbol: "🌍", gradient: "from-blue-700 to-indigo-900", category: "ruler" },
+  { name: "Osman Bey", title: "Osmanlı Kurucusu", dates: "1258 - 1326", desc: "Osmanlı Beyliği'ni kuran ve 600 yıl sürecek bir imparatorluğun temelini atan lider.", imgSymbol: "🌱", gradient: "from-green-700 to-emerald-900", category: "ruler" },
+  { name: "Fatih Sultan Mehmet", title: "Osmanlı Padişahı", dates: "1432 - 1481", desc: "İstanbul'u fethederek çağ açıp çağ kapattı. Çok yönlü bir entelektüel ve büyük bir stratejistti.", imgSymbol: "🏰", gradient: "from-red-500 to-rose-700", category: "ruler" },
+  { name: "Yavuz Sultan Selim", title: "Osmanlı Padişahı", dates: "1470 - 1520", desc: "Halifeliği Osmanlı'ya getirdi. Hazineyi doldurdu. '8 yıla 80 yıllık iş sığdıran padişah' olarak bilinir.", imgSymbol: "👳", gradient: "from-yellow-600 to-amber-700", category: "ruler" },
+  { name: "Kanuni Sultan Süleyman", title: "Osmanlı Padişahı", dates: "1494 - 1566", desc: "46 yıl ile tahtta en uzun kalan padişahtır. Osmanlı'yı gücünün zirvesine taşıdı. Batı'da 'Muhteşem' olarak bilinir.", imgSymbol: "👑", gradient: "from-purple-500 to-indigo-700", category: "ruler" },
+  { name: "II. Abdülhamid", title: "Osmanlı Padişahı", dates: "1842 - 1918", desc: "En zor dönemde devleti 33 yıl diplomasi ve denge politikasıyla yönetti. Eğitim ve ulaşıma büyük önem verdi.", imgSymbol: "🚂", gradient: "from-slate-600 to-slate-800", category: "ruler" },
+  { name: "Mustafa Kemal Atatürk", title: "Türkiye Cumhuriyeti Kurucusu", dates: "1881 - 1938", desc: "Kurtuluş Savaşı'nın başkomutanı. Cumhuriyeti kurarak Türk milletinin kaderini değiştiren eşsiz lider.", imgSymbol: "🇹🇷", gradient: "from-red-600 to-red-800", category: "ruler" },
+  { name: "Vezir Tonyukuk", title: "Göktürk Bilgesi", dates: "646 - 726", desc: "Türk tarihinin bilinen ilk veziri ve yazarlarındandır. Göktürklerin 'Apoletli Bilgesi' olarak bilinir.", imgSymbol: "🗿", gradient: "from-stone-400 to-stone-600", category: "scholar" },
+  { name: "Farabi", title: "Filozof ve Bilim İnsanı", dates: "872 - 950", desc: "Batı'da 'Al-Pharabius' olarak bilinir. Aristo'dan sonra 'Muallim-i Sani' (İkinci Öğretmen) olarak anılır.", imgSymbol: "🎼", gradient: "from-indigo-400 to-purple-600", category: "scholar" },
+  { name: "İbn-i Sina", title: "Tıp Alimi ve Filozof", dates: "980 - 1037", desc: "Batı'da 'Avicenna' olarak bilinir. 'El-Kanun fi't-Tıb' kitabı yüzyıllarca Avrupa'da ders kitabı olarak okutuldu.", imgSymbol: "🩺", gradient: "from-emerald-400 to-green-600", category: "scholar" },
+  { name: "Kaşgarlı Mahmut", title: "Dil Bilimci", dates: "11. Yüzyıl", desc: "İlk Türkçe sözlük olan Divan-ı Lügati't-Türk'ü yazarak Türkçenin Arapça kadar zengin bir dil olduğunu kanıtladı.", imgSymbol: "📖", gradient: "from-amber-500 to-orange-600", category: "scholar" },
+  { name: "Yusuf Has Hacib", title: "Düşünür ve Şair", dates: "11. Yüzyıl", desc: "Mutluluk veren bilgi anlamına gelen 'Kutadgu Bilig' adlı siyasetname türündeki eserin yazarıdır.", imgSymbol: "⚖️", gradient: "from-blue-400 to-blue-600", category: "scholar" },
+  { name: "Hoca Ahmet Yesevi", title: "Türk Mutasavvıfı", dates: "1093 - 1166", desc: "Türkistan piri. 'Divan-ı Hikmet' ile İslamiyet'i Türkçe olarak halka anlatmış, Anadolu'nun Türkleşmesinde manevi rol oynamıştır.", imgSymbol: "🌹", gradient: "from-rose-400 to-pink-600", category: "scholar" },
+  { name: "Mevlana Celaleddin-i Rumi", title: "Düşünür ve Mutasavvıf", dates: "1207 - 1273", desc: "Hoşgörü felsefesiyle tüm dünyayı etkilemiştir. Mesnevi en önemli eseridir. 'Gel, ne olursan ol yine gel' demiştir.", imgSymbol: "🌀", gradient: "from-amber-200 to-orange-400", category: "scholar" },
+  { name: "Yunus Emre", title: "Halk Ozanı", dates: "1238 - 1320", desc: "Tasavvuf şiirinin en önemli temsilcisidir. Türkçeyi en yalın ve güzel haliyle kullanmıştır. 'Sevelim, sevilelim' felsefesini işlemiştir.", imgSymbol: "❤️", gradient: "from-red-300 to-red-500", category: "scholar" },
+  { name: "Ali Kuşçu", title: "Astronom ve Matematikçi", dates: "1403 - 1474", desc: "Timur İmparatorluğu'ndan Osmanlı'ya gelmiş, Fatih Sultan Mehmet'in davetiyle İstanbul'da müderrislik yapmıştır.", imgSymbol: "🔭", gradient: "from-slate-700 to-blue-900", category: "scholar" },
+  { name: "Mimar Sinan", title: "Baş Mimar", dates: "1489 - 1588", desc: "Osmanlı'nın en büyük mimarıdır. 'Ustalık eserim' dediği Selimiye Camii ve Süleymaniye gibi şaheserler bırakmıştır.", imgSymbol: "🏛️", gradient: "from-stone-300 to-stone-500", category: "scholar" },
+  { name: "Katip Çelebi", title: "Bilim İnsanı", dates: "1609 - 1657", desc: "Cihannüma adlı coğrafya eseriyle tanınır. Bibliyografya ve tarih alanlarında önemli çalışmalar yapmıştır.", imgSymbol: "🌍", gradient: "from-cyan-500 to-blue-500", category: "scholar" },
+  { name: "Aziz Sancar", title: "Nobel Ödüllü Bilim İnsanı", dates: "1946 - Günümüz", desc: "DNA onarımı üzerine yaptığı çalışmalarla 2015 Nobel Kimya Ödülü'nü kazanarak gururumuz olmuştur.", imgSymbol: "🧬", gradient: "from-purple-600 to-blue-600", category: "scholar" },
+  { name: "Kültigin", title: "Göktürk Komutanı", dates: "684 - 731", desc: "II. Göktürk Devleti'nin kuruluşunda ağabeyi Bilge Kağan ile büyük mücadeleler vermiş efsanevi komutandır.", imgSymbol: "⚔️", gradient: "from-gray-600 to-gray-800", category: "hero" },
+  { name: "Barbaros Hayrettin Paşa", title: "Kaptan-ı Derya", dates: "1478 - 1546", desc: "Akdeniz'i bir Türk gölü haline getiren büyük denizci. Preveze Deniz Zaferi'nin mimarıdır.", imgSymbol: "⚓", gradient: "from-blue-500 to-blue-800", category: "hero" },
+  { name: "Piri Reis", title: "Denizci ve Kartograf", dates: "1465 - 1553", desc: "Çizdiği Dünya Haritası (1513) ile Amerika kıtasını detaylı gösteren ilk haritalardan birini yapmıştır. Kitab-ı Bahriye'nin yazarıdır.", imgSymbol: "🗺️", gradient: "from-teal-500 to-cyan-700", category: "hero" },
+  { name: "Seyit Onbaşı", title: "Çanakkale Kahramanı", dates: "1889 - 1939", desc: "Çanakkale Savaşı'nda 215 kg'lık top mermisini tek başına sırtlayarak Ocean zırhlısını vuran kahraman asker.", imgSymbol: "💪", gradient: "from-stone-500 to-amber-700", category: "hero" },
+  { name: "Nene Hatun", title: "Milli Mücadele Kahramanı", dates: "1857 - 1955", desc: "93 Harbi sırasında Erzurum'da Aziziye Tabyası'nın savunulmasında halka önderlik eden Türk kadını.", imgSymbol: "🧣", gradient: "from-red-400 to-red-600", category: "hero" }
+];
+
+// --- DEVLETLER VERİ SETİ ---
+const turkishStates = [
+  {
+    name: "Büyük Hun İmparatorluğu",
+    founder: "Teoman",
+    capital: "Ötüken",
+    dates: "M.Ö. 220 - M.S. 216",
+    desc: "Tarihte bilinen ilk Türk devleti. Orta Asya'daki Türk boylarını ilk kez bir bayrak altında toplamıştır.",
+    color: "bg-amber-600",
+    flagColor: "text-amber-600"
+  },
+  {
+    name: "Batı Hun İmparatorluğu",
+    founder: "Panu",
+    capital: "Ötüken",
+    dates: "M.S. 48 - M.S. 216",
+    desc: "Büyük Hun İmparatorluğu'nun ikiye ayrılmasından sonra kurulan batı koludur.",
+    color: "bg-stone-600",
+    flagColor: "text-stone-600"
+  },
+  {
+    name: "Avrupa Hun İmparatorluğu",
+    founder: "Balamir",
+    capital: "Budapeşte (Etzelburg)",
+    dates: "375 - 469",
+    desc: "Kavimler Göçü ile Avrupa'ya gelen Hunların kurduğu, Attila döneminde en parlak devrini yaşayan devlet.",
+    color: "bg-red-800",
+    flagColor: "text-red-800"
+  },
+  {
+    name: "Ak Hun İmparatorluğu",
+    founder: "Aksuvar",
+    capital: "Belh",
+    dates: "420 - 552",
+    desc: "Afganistan, Pakistan ve Kuzey Hindistan bölgesinde hüküm sürmüştür. Göktürkler ve Sasaniler tarafından yıkılmıştır.",
+    color: "bg-gray-500",
+    flagColor: "text-gray-500"
+  },
+  {
+    name: "Göktürk İmparatorluğu",
+    founder: "Bumin Kağan",
+    capital: "Ötüken",
+    dates: "552 - 744",
+    desc: "Tarihte 'Türk' adını ilk kez devlet adı olarak kullanan, Orhun Abidelerini bırakan büyük imparatorluk.",
+    color: "bg-cyan-600",
+    flagColor: "text-cyan-600"
+  },
+  {
+    name: "Avar İmparatorluğu",
+    founder: "Bayan Kağan",
+    capital: "Orta Avrupa",
+    dates: "562 - 803",
+    desc: "Hem Asya'da hem Avrupa'da devlet kurmuşlardır. İstanbul'u kuşatan ilk Türk devleti unvanına sahiptirler.",
+    color: "bg-orange-700",
+    flagColor: "text-orange-700"
+  },
+  {
+    name: "Hazar İmparatorluğu",
+    founder: "Böri Şad",
+    capital: "Belencer / İtil",
+    dates: "651 - 983",
+    desc: "Kafkasya ve Karadeniz'in kuzeyinde hüküm sürmüş, Museviliği benimseyen tek Türk devletidir.",
+    color: "bg-blue-500",
+    flagColor: "text-blue-500"
+  },
+  {
+    name: "Uygur Devleti",
+    founder: "Kutluk Bilge Kül Kağan",
+    capital: "Karabalgasun",
+    dates: "744 - 840",
+    desc: "Yerleşik hayata geçen ilk Türk devleti. Maniheizm dinini benimsemiş, tarım, sanat ve matbaada ileri gitmişlerdir.",
+    color: "bg-yellow-600",
+    flagColor: "text-yellow-600"
+  },
+  {
+    name: "Karahanlılar",
+    founder: "Bilge Kül Kadir Han",
+    capital: "Balasagun / Kaşgar",
+    dates: "840 - 1212",
+    desc: "Orta Asya'da İslamiyet'i kabul eden ilk büyük Türk devleti. İlk Türk-İslam eserlerini vermişlerdir.",
+    color: "bg-emerald-700",
+    flagColor: "text-emerald-700"
+  },
+  {
+    name: "Gazneliler",
+    founder: "Alp Tigin",
+    capital: "Gazne",
+    dates: "962 - 1187",
+    desc: "Gazneli Mahmut döneminde Hindistan'a 17 sefer düzenleyerek İslamiyet'i yaymışlardır.",
+    color: "bg-green-800",
+    flagColor: "text-green-800"
+  },
+  {
+    name: "Büyük Selçuklu Devleti",
+    founder: "Tuğrul Bey",
+    capital: "Nişapur / Rey / İsfahan",
+    dates: "1040 - 1157",
+    desc: "Anadolu'nun kapılarını Türklere açan, İslam dünyasının siyasi liderliğini üstlenen cihan devleti.",
+    color: "bg-teal-700",
+    flagColor: "text-teal-700"
+  },
+  {
+    name: "Harzemşahlar",
+    founder: "İl Arslan",
+    capital: "Gürgenç",
+    dates: "1097 - 1231",
+    desc: "Büyük Selçuklu'nun varisi olduklarını iddia etmişler, Moğol istilasıyla yıkılmışlardır.",
+    color: "bg-indigo-600",
+    flagColor: "text-indigo-600"
+  },
+  {
+    name: "Altınordu Devleti",
+    founder: "Batu Han",
+    capital: "Saray",
+    dates: "1236 - 1502",
+    desc: "Karadeniz'in kuzeyinde kurulan ve Rus knezlikleri üzerinde uzun süre hakimiyet kuran Türk-Moğol devleti.",
+    color: "bg-yellow-700",
+    flagColor: "text-yellow-700"
+  },
+  {
+    name: "Timur İmparatorluğu",
+    founder: "Timur",
+    capital: "Semerkant",
+    dates: "1370 - 1507",
+    desc: "Orta Asya'da kurulan, Semerkant'ı bilim ve sanat merkezi haline getiren büyük imparatorluk.",
+    color: "bg-blue-900",
+    flagColor: "text-blue-900"
+  },
+  {
+    name: "Babür İmparatorluğu",
+    founder: "Babür Şah",
+    capital: "Agra / Delhi",
+    dates: "1526 - 1858",
+    desc: "Hindistan'da kurulan, Tac Mahal gibi eserleri miras bırakan Türk devleti.",
+    color: "bg-purple-700",
+    flagColor: "text-purple-700"
+  },
+  {
+    name: "Osmanlı İmparatorluğu",
+    founder: "Osman Bey",
+    capital: "Söğüt / Bursa / Edirne / İstanbul",
+    dates: "1299 - 1922",
+    desc: "Üç kıtaya hükmeden, 600 yıl yaşayan ve İslam halifeliğini bünyesinde barındıran cihan devleti.",
+    color: "bg-red-700",
+    flagColor: "text-red-700"
+  }
+];
+
+// --- ALT BİLEŞENLER (KOMPONENTLER) ---
+
+// Quiz Bölümünü Bağımsız Bileşene Çevirdik (Hook Hatasını Önlemek İçin)
+const QuizSection = () => {
+  const [qState, setQState] = useState({ current: 0, score: 0, finished: false, selected: null });
+  const questions = [
+    { q: "Türklerin kullandığı ilk takvim hangisidir?", opts: ["Hicri Takvim", "12 Hayvanlı Türk Takvimi", "Celali Takvim", "Rumi Takvim"], a: 1 },
+    { q: "'Devlet' kelimesinin eski Türkçedeki karşılığı nedir?", opts: ["İl (El)", "Budun", "Kut", "Yargu"], a: 0 },
+    { q: "Malazgirt Savaşı hangi tarihte yapılmıştır?", opts: ["1453", "1299", "1071", "1923"], a: 2 },
+    { q: "Osmanlı Devleti'nin kurucusu kimdir?", opts: ["Orhan Gazi", "Osman Bey", "Ertuğrul Gazi", "I. Murat"], a: 1 },
+    { q: "Mustafa Kemal Atatürk'e 'Mareşal' rütbesi hangi savaştan sonra verilmiştir?", opts: ["Çanakkale Savaşı", "Sakarya Meydan Muharebesi", "Büyük Taarruz", "I. İnönü Savaşı"], a: 1 },
+  ];
+
+  const handleAnswer = (idx) => {
+    if (qState.selected !== null) return;
+    const isCorrect = idx === questions[qState.current].a;
+    setQState(prev => ({ ...prev, selected: idx, score: isCorrect ? prev.score + 1 : prev.score }));
+    setTimeout(() => {
+      if (qState.current + 1 < questions.length) setQState(prev => ({ ...prev, current: prev.current + 1, selected: null }));
+      else setQState(prev => ({ ...prev, finished: true }));
+    }, 1200);
+  };
+
+  if (qState.finished) return (
+    <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4 animate-in zoom-in duration-500 relative z-10">
+      <div className="relative mb-8">
+         <div className="absolute inset-0 bg-amber-400 blur-2xl opacity-20 rounded-full animate-pulse"></div>
+         <div className="w-28 h-28 bg-gradient-to-tr from-amber-300 to-yellow-500 rounded-3xl rotate-3 flex items-center justify-center shadow-xl shadow-amber-200 relative z-10">
+           <Award size={64} className="text-white drop-shadow-sm" />
+         </div>
+         <div className="absolute -bottom-3 -right-3 bg-white p-2 rounded-full shadow-lg z-20">
+           <SeljukStar className="w-6 h-6 text-red-600" />
+         </div>
+      </div>
+      
+      <h3 className="text-3xl font-serif font-bold text-gray-800 mb-2">Muhteşem!</h3>
+      <p className="text-gray-500 mb-8 max-w-xs">
+        Tarih bilgin takdire şayan. <br/>
+        <span className="font-bold text-xl text-teal-600 mt-2 block">{questions.length} soruda {qState.score} doğru</span>
+      </p>
+      
+      <button onClick={() => setQState({ current: 0, score: 0, finished: false, selected: null })} className="bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-black hover:scale-105 transition-all shadow-xl shadow-gray-200">
+        <RotateCcw size={20} /> Yeniden Başla
+      </button>
+    </div>
+  );
+
+  const question = questions[qState.current];
+
+  return (
+    <div className="h-full flex flex-col pb-24 animate-in slide-in-from-right duration-500 relative z-10">
+      <div className="flex justify-between items-end mb-8">
+        <div>
+           <span className="text-xs font-bold text-teal-600 uppercase tracking-widest block mb-1">Bilgi Yarışması</span>
+           <h2 className="text-2xl font-serif font-bold text-gray-800">Tarihini Sına</h2>
+        </div>
+        <div className="bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100 text-sm font-bold text-gray-600">
+          {qState.current + 1} / {questions.length}
+        </div>
+      </div>
+      
+      {/* İlerleme Çubuğu */}
+      <div className="w-full bg-gray-100 h-2 rounded-full mb-8 overflow-hidden">
+         <div className="h-full bg-gradient-to-r from-teal-400 to-blue-500 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(56,189,248,0.5)]" style={{ width: `${((qState.current + 1) / questions.length) * 100}%` }}></div>
+      </div>
+      
+      <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-50 relative overflow-hidden mb-6">
+        <div className="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 bg-teal-50 rounded-full opacity-50"></div>
+        <h3 className="text-xl font-bold text-gray-800 mb-8 leading-relaxed relative z-10">{question.q}</h3>
+        
+        <div className="space-y-3 relative z-10">
+          {question.opts.map((opt, idx) => {
+            let style = "border-slate-100 hover:border-teal-300 hover:bg-teal-50/50 text-gray-600 bg-white";
+            let icon = <div className="w-6 h-6 rounded-full border-2 border-slate-200"></div>;
+            
+            if (qState.selected !== null) {
+              if (idx === question.a) {
+                  style = "border-teal-500 bg-teal-50 text-teal-800 font-bold shadow-md shadow-teal-100 scale-[1.02]";
+                  icon = <div className="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-white"><Sparkles size={14}/></div>;
+              }
+              else if (idx === qState.selected) {
+                  style = "border-red-400 bg-red-50 text-red-800 opacity-80";
+                  icon = <div className="w-6 h-6 rounded-full bg-red-400 flex items-center justify-center text-white"><X size={14}/></div>;
+              }
+              else style = "border-slate-50 text-gray-300 opacity-50";
+            }
+            return (
+              <button 
+                key={idx} 
+                onClick={() => handleAnswer(idx)} 
+                disabled={qState.selected !== null}
+                className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-300 flex items-center justify-between group ${style}`}
+              >
+                <span>{opt}</span>
+                <span className="transition-transform duration-300 group-hover:scale-110">{icon}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Modal = ({ isOpen, onClose, title, children, gradient }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[85vh] relative">
+        <div className={`bg-gradient-to-r ${gradient} p-6 flex justify-between items-start text-white relative overflow-hidden shrink-0`}>
+          <div className="absolute top-0 right-0 p-4 opacity-20 transform translate-x-4 -translate-y-4">
+             <KayiSymbol className="w-32 h-32 text-white" />
+          </div>
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+               <SeljukStar className="w-6 h-6 text-white" />
+            </div>
+            <div>
+               <h3 className="font-bold font-serif text-2xl tracking-wide">{title}</h3>
+               <div className="h-1 w-12 bg-amber-400 mt-2 rounded-full shadow-sm"></div>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors z-20"><X size={24} /></button>
+        </div>
+        
+        <div className="p-6 overflow-y-auto custom-scrollbar bg-slate-50/50">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const NavBtn = ({ active, onClick, icon: Icon, label }) => (
+  <button 
+     onClick={onClick} 
+     className={`flex flex-col items-center justify-center w-full h-full py-2 rounded-xl transition-all duration-300 relative overflow-hidden ${active ? 'text-amber-400' : 'text-gray-400 hover:text-white'}`}
+  >
+    {active && <div className="absolute inset-0 bg-white/10 blur-md"></div>}
+    <Icon size={24} strokeWidth={active ? 2.5 : 2} className="mb-1 relative z-10" />
+    <span className="text-[10px] font-bold relative z-10">{label}</span>
+  </button>
+);
+
+// --- ANA UYGULAMA BİLEŞENİ ---
+
+export default function TurkTarihiPro() {
+  const [activeTab, setActiveTab] = useState('home');
+  const [selectedPeriod, setSelectedPeriod] = useState(null);
+  const [selectedLeader, setSelectedLeader] = useState(null);
+  const [leaderCategory, setLeaderCategory] = useState('all');
+  const [dailyQuote, setDailyQuote] = useState(historicQuotes[0]);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * historicQuotes.length);
+    setDailyQuote(historicQuotes[randomIndex]);
+  }, []);
+
+  // Kültür ve Sanat Sekmesi Render Fonksiyonu
+  const renderArt = () => (
+    <div className="space-y-8 pb-24 animate-in fade-in duration-500 relative z-10">
+       
+       <div className="flex items-center gap-2 mb-4">
+         <span className="bg-teal-100 text-teal-700 p-2 rounded-lg"><Palette size={24} /></span>
+         <h2 className="text-2xl font-serif font-bold text-gray-800">Kültür ve İnanç</h2>
+       </div>
+
+       {/* Şamanizm Kartı */}
+       <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-8 opacity-20">
+             <MotifGeyik className="w-48 h-48 text-white" />
+          </div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 text-purple-300 mb-2 font-bold tracking-widest text-xs uppercase">
+              <Tent size={16} /> Şamanizm ve Gök Tanrı
+            </div>
+            <h3 className="text-2xl font-serif font-bold mb-3">Bozkırın Ruhu</h3>
+            <p className="text-purple-100 text-sm leading-relaxed mb-4 opacity-90">
+              Eski Türk inancında doğadaki her varlığın bir ruhu olduğuna inanılırdı. Şamanlar (Kam), davullarıyla transa geçerek ruhlar alemiyle iletişim kurardı.
+            </p>
+            <div className="flex gap-4">
+              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm flex flex-col items-center gap-1 w-24">
+                <Trees size={20} className="text-green-300" />
+                <span className="text-[10px] font-bold">Hayat Ağacı</span>
+              </div>
+               <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm flex flex-col items-center gap-1 w-24">
+                <Shield size={20} className="text-amber-300" />
+                <span className="text-[10px] font-bold">Demir Dağ</span>
+              </div>
+            </div>
+          </div>
+       </div>
+
+       {/* Pazırık Halısı Bölümü */}
+       <div>
+         <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+           <Scroll size={18} className="text-red-700"/>
+           Dünyanın En Eski Halısı: Pazırık
+         </h3>
+         <div className="bg-red-900 p-1 rounded-2xl shadow-lg relative overflow-hidden">
+            {/* Halı Görseli ve Fallback Mekanizması */}
+            <div className="border-[6px] border-amber-600 rounded-xl bg-red-800 relative overflow-hidden h-64 md:h-80 group">
+              {!imageError ? (
+                <>
+                  <img 
+                    src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Pazyryk_carpet.jpg" 
+                    alt="Pazırık Halısı" 
+                    onError={() => setImageError(true)}
+                    className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
+                  />
+                  {/* Bilgi Katmanı (Sadece Resim Yüklendiyse) */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                     <div className="text-white opacity-90">
+                        <div className="flex items-center gap-1 text-amber-400 text-xs font-bold mb-1">
+                          <Sparkles size={12} /> M.Ö. 3-5. Yüzyıl
+                        </div>
+                        <p className="text-xs">Altay Dağları'nda donmuş bir kurganda bulundu.</p>
+                     </div>
+                  </div>
+                </>
+              ) : (
+                // Resim Yüklenemezse Gösterilecek Sanatsal Yedek (Fallback)
+                <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center relative">
+                   {/* Desen Arkaplanı */}
+                   <div className="absolute inset-0 opacity-10 grid grid-cols-6 grid-rows-4 gap-2 p-2">
+                      {[...Array(24)].map((_, i) => <MotifGeyik key={i} className="text-white" />)}
+                   </div>
+                   <div className="bg-red-900/80 backdrop-blur-md p-6 rounded-2xl border border-red-700 z-10 flex flex-col items-center">
+                      <ImageOff className="text-red-300 mb-2" size={32} />
+                      <h4 className="text-white font-serif font-bold mb-1">Görsel Yüklenemedi</h4>
+                      <p className="text-red-100 text-xs max-w-[200px]">
+                        Bağlantı sorunu nedeniyle orijinal resim gösterilemiyor. Ancak motifler ve desenler bu halıdan esinlenerek kodlanmıştır.
+                      </p>
+                   </div>
+                </div>
+              )}
+
+              {/* Köşe Süsleri (Her Durumda Görünür) */}
+              <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-500 rounded-tl-lg z-20"></div>
+              <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-500 rounded-tr-lg z-20"></div>
+              <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-500 rounded-bl-lg z-20"></div>
+              <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-500 rounded-br-lg z-20"></div>
+            </div>
+            
+            <div className="bg-white p-4 mt-1 rounded-b-xl">
+               <p className="text-xs text-gray-600 leading-relaxed">
+                 <span className="font-bold text-red-800">Pazırık Halısı</span>, M.Ö. 3-5. yüzyıllara aittir. Üzerindeki 24 adet geyik figürü ve süvari betimlemeleri, Türklerin halı sanatındaki ustalığını kanıtlar. Düğümleri "Türk Düğümü" (Gördes) tekniğiyle atılmıştır.
+               </p>
+            </div>
+         </div>
+       </div>
+
+       {/* Motif Sözlüğü (SVG İkonlara Geri Dönüldü) */}
+       <div>
+          <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+             <Feather size={18} className="text-amber-600"/>
+             Motiflerin Dili
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+             <div className="bg-white p-3 rounded-xl shadow-sm border border-stone-100 flex flex-col items-center text-center hover:border-amber-200 transition-colors">
+                <MotifEliBelinde className="w-16 h-16 text-red-500 mb-2" />
+                <span className="font-bold text-gray-800 text-sm">Eli Belinde</span>
+                <span className="text-[10px] text-gray-500">Analık ve Bereket</span>
+             </div>
+             <div className="bg-white p-3 rounded-xl shadow-sm border border-stone-100 flex flex-col items-center text-center hover:border-amber-200 transition-colors">
+                <MotifKocBoynuzu className="w-16 h-16 text-blue-600 mb-2" />
+                <span className="font-bold text-gray-800 text-sm">Koç Boynuzu</span>
+                <span className="text-[10px] text-gray-500">Güç ve Yiğitlik</span>
+             </div>
+             <div className="bg-white p-3 rounded-xl shadow-sm border border-stone-100 flex flex-col items-center text-center hover:border-amber-200 transition-colors">
+                <MotifHayatAgaci className="w-16 h-16 text-green-600 mb-2" />
+                <span className="font-bold text-gray-800 text-sm">Hayat Ağacı</span>
+                <span className="text-[10px] text-gray-500">Ölümsüzlük</span>
+             </div>
+             <div className="bg-white p-3 rounded-xl shadow-sm border border-stone-100 flex flex-col items-center text-center hover:border-amber-200 transition-colors">
+                <MotifGeyik className="w-16 h-16 text-amber-600 mb-2" />
+                <span className="font-bold text-gray-800 text-sm">Geyik</span>
+                <span className="text-[10px] text-gray-500">Ruhani Rehber</span>
+             </div>
+          </div>
+       </div>
+
+    </div>
+  );
+
+  const renderStates = () => (
+    <div className="space-y-6 pb-24 animate-in fade-in duration-500 relative z-10">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="bg-indigo-100 text-indigo-700 p-2 rounded-lg"><Landmark size={24} /></span>
+        <h2 className="text-2xl font-serif font-bold text-gray-800">Türk Devletleri</h2>
+      </div>
+      <p className="text-gray-600 text-sm mb-4">Tarih boyunca kurulan 16 büyük Türk devleti ve özellikleri.</p>
+
+      <div className="grid grid-cols-1 gap-4">
+        {turkishStates.map((state, idx) => (
+          <div key={idx} className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 group">
+            <div className={`h-3 w-full ${state.color}`}></div>
+            <div className="p-5">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className={`font-bold text-lg ${state.flagColor} flex items-center gap-2`}>
+                    <Flag size={18} /> {state.name}
+                  </h3>
+                  <span className="text-xs font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded mt-1 inline-block">{state.dates}</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mb-3 text-sm">
+                <div>
+                  <span className="text-gray-400 text-xs block">Kurucu</span>
+                  <span className="font-semibold text-gray-800">{state.founder}</span>
+                </div>
+                <div>
+                  <span className="text-gray-400 text-xs block">Başkent</span>
+                  <span className="font-semibold text-gray-800">{state.capital}</span>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3 mt-2">
+                {state.desc}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Türkiye Cumhuriyeti Özel Kartı */}
+      <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-2xl p-6 text-white shadow-xl mt-6 relative overflow-hidden">
+         <div className="absolute -right-6 -top-6 opacity-20 rotate-12">
+           <Star size={120} fill="white" />
+         </div>
+         <div className="relative z-10">
+           <h3 className="text-2xl font-bold mb-2 flex items-center gap-2"><Star fill="white" size={24}/> Türkiye Cumhuriyeti</h3>
+           <p className="text-red-100 text-sm mb-4">1923'ten sonsuza dek...</p>
+           <div className="flex gap-8 text-sm">
+             <div>
+               <span className="block opacity-70 text-xs">Kurucu</span>
+               <span className="font-bold text-lg">M. Kemal Atatürk</span>
+             </div>
+             <div>
+               <span className="block opacity-70 text-xs">Başkent</span>
+               <span className="font-bold text-lg">Ankara</span>
+             </div>
+           </div>
+         </div>
+      </div>
+    </div>
+  );
+
+  const renderHome = () => (
+    <div className="space-y-8 pb-24 animate-in fade-in duration-500 relative z-10">
+      
+      {/* Günlük Söz Bölümü */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border-l-4 border-amber-500 shadow-sm flex gap-3 animate-in slide-in-from-top duration-700">
+        <div className="bg-amber-100 text-amber-700 p-2 rounded-lg h-fit">
+           <Feather size={20} />
+        </div>
+        <div>
+           <p className="text-gray-800 font-serif italic text-sm leading-relaxed mb-2">
+             "{dailyQuote.text}"
+           </p>
+           <span className="text-xs font-bold text-amber-700 uppercase tracking-wider block">
+             - {dailyQuote.author}
+           </span>
+        </div>
+      </div>
+
+      {/* Hero Kart */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-900 via-rose-800 to-red-950 text-white shadow-2xl shadow-red-900/20 group">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div className="absolute top-0 right-0 p-6 opacity-20 transform group-hover:scale-110 transition-transform duration-700">
+           <KayiSymbol className="w-48 h-48 text-amber-200" />
+        </div>
+        
+        <div className="p-8 relative z-10">
+          <div className="flex items-center gap-2 mb-3 text-amber-400">
+            <Sparkles size={16} />
+            <span className="text-xs font-bold tracking-[0.2em] uppercase">Tarihini Tanı, Geleceğe Yürü</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 leading-tight drop-shadow-md">
+            Türk Tarihi <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">Rehberi</span>
+          </h1>
+          <p className="text-red-100 opacity-90 text-sm md:text-base leading-relaxed max-w-sm font-medium">
+            Orta Asya'nın bozkırlarından Anadolu'ya, Selçuklu'dan Cumhuriyet'e uzanan eşsiz bir yolculuk.
+          </p>
+        </div>
+        
+        {/* Dekoratif Alt Şerit */}
+        <div className="h-3 w-full bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 flex items-center justify-center gap-8 overflow-hidden">
+           {[...Array(10)].map((_,i) => <div key={i} className="w-1 h-1 bg-red-900 rounded-full opacity-50"></div>)}
+        </div>
+      </div>
+
+      {/* Dönemler Grid */}
+      <div>
+        <h2 className="text-xl font-serif font-bold text-gray-800 mb-5 flex items-center gap-2 px-1">
+          <div className="p-1.5 bg-red-100 rounded-md text-red-700"><Map size={20} /></div>
+          Tarihi Dönemler
+        </h2>
+        <div className="grid grid-cols-1 gap-5">
+          {periods.map((period) => (
+            <div 
+              key={period.id}
+              onClick={() => setSelectedPeriod(period)}
+              className="group relative bg-white rounded-2xl p-1 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100"
+            >
+              <div className={`absolute inset-0 bg-gradient-to-br ${period.gradient} opacity-[0.03] rounded-2xl`}></div>
+              <div className="flex h-full">
+                 {/* Sol Dikey Şerit */}
+                 <div className={`w-3 rounded-l-xl bg-gradient-to-b ${period.gradient}`}></div>
+                 
+                 <div className="flex-1 p-5 flex justify-between items-center">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className={`text-[10px] font-extrabold tracking-wider uppercase text-white px-3 py-1 rounded-full bg-gradient-to-r ${period.gradient} shadow-sm`}>
+                          {period.years}
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-gray-800 text-lg md:text-xl group-hover:text-red-700 transition-colors mb-1">{period.title}</h3>
+                      <p className="text-xs md:text-sm text-gray-500 line-clamp-2">{period.shortDesc}</p>
+                    </div>
+                    <div className="pl-4">
+                      <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-red-50 group-hover:text-red-600 transition-all shadow-sm group-hover:scale-110">
+                        <ChevronRight size={24} />
+                      </div>
+                    </div>
+                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Destanlar - Yatay Kaydırma */}
+      <div>
+        <h2 className="text-xl font-serif font-bold text-gray-800 mb-5 flex items-center gap-2 px-1">
+          <div className="p-1.5 bg-teal-100 rounded-md text-teal-700"><Scroll size={20} /></div>
+          Türk Destanları
+        </h2>
+        <div className="flex gap-4 overflow-x-auto pb-4 pt-1 px-1 scrollbar-hide -mx-4 md:mx-0 px-4 md:px-0">
+           {epics.map((epic, idx) => (
+             <div key={idx} className={`min-w-[240px] p-5 rounded-2xl border ${epic.color} bg-white shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-32 relative overflow-hidden group`}>
+               <div className="absolute -right-4 -bottom-4 opacity-[0.07] group-hover:opacity-10 transition-opacity transform rotate-12">
+                 <Scroll size={80} className="fill-current" />
+               </div>
+               <h4 className="font-bold text-base z-10">{epic.name} Destanı</h4>
+               <p className="text-xs opacity-80 leading-relaxed z-10">{epic.desc}</p>
+             </div>
+           ))}
+        </div>
+      </div>
+
+    </div>
+  );
+
+  const renderLeaders = () => {
+    const filteredLeaders = leaderCategory === 'all' 
+      ? leaders 
+      : leaders.filter(l => l.category === leaderCategory);
+
+    return (
+      <div className="space-y-6 animate-in slide-in-from-right duration-500 pb-24 relative z-10">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-2xl font-serif font-bold text-gray-800 flex items-center gap-2">
+             <span className="bg-amber-100 text-amber-700 p-2 rounded-lg"><Crown size={24} /></span>
+             Önemli Şahsiyetler
+          </h2>
+          
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {[
+              { id: 'all', label: 'Tümü' },
+              { id: 'ruler', label: 'Hükümdarlar' },
+              { id: 'scholar', label: 'Bilge & Alim' },
+              { id: 'hero', label: 'Kahramanlar' }
+            ].map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setLeaderCategory(cat.id)}
+                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                  leaderCategory === cat.id 
+                    ? 'bg-gray-800 text-white shadow-lg' 
+                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+  
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {filteredLeaders.map((leader, idx) => (
+            <div 
+              key={idx} 
+              onClick={() => setSelectedLeader(leader)}
+              className="group bg-white rounded-3xl p-5 shadow-lg shadow-slate-200/50 border border-slate-100 flex gap-5 items-center cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+            >
+              <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${leader.gradient} opacity-[0.07] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150 duration-500`}></div>
+              
+              <div className={`w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br ${leader.gradient} flex items-center justify-center text-3xl shadow-md text-white ring-4 ring-white`}>
+                {leader.imgSymbol}
+              </div>
+              
+              <div className="flex-1 relative z-10">
+                <h3 className="font-bold text-gray-900 text-lg leading-tight group-hover:text-red-700 transition-colors">{leader.name}</h3>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mt-1 mb-0.5">{leader.title}</span>
+              </div>
+              
+              <ChevronRight size={20} className="text-gray-300 group-hover:text-red-500 transition-colors" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="bg-slate-50 min-h-screen font-sans text-gray-800 selection:bg-red-100 selection:text-red-900 overflow-x-hidden">
+      <BackgroundPattern />
+      
+      {/* Ana Konteyner */}
+      <div className="max-w-md mx-auto md:max-w-4xl min-h-screen relative flex flex-col">
+        
+        {/* Header - Glassmorphism */}
+        <header className="sticky top-0 z-40 px-6 py-4 transition-all duration-300 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm md:rounded-b-3xl md:mt-2 md:mx-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setActiveTab('home')}>
+              <div className="bg-gradient-to-tr from-red-600 to-rose-500 text-white p-2.5 rounded-xl shadow-lg shadow-red-200 group-hover:rotate-12 transition-transform duration-300">
+                <SeljukStar className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-serif font-bold text-gray-900 leading-none">Türk Tarihi</h1>
+                <p className="text-[10px] text-gray-400 font-bold tracking-[0.2em] mt-1">PRO</p>
+              </div>
+            </div>
+            
+            {/* Desktop Nav Kısmı (Header içinde) */}
+            <div className="hidden md:flex gap-2">
+                 {['home', 'states', 'leaders', 'art', 'quiz'].map(tab => (
+                     <button 
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab ? 'bg-gray-900 text-white shadow-lg' : 'text-gray-500 hover:bg-gray-100'}`}
+                     >
+                        {tab === 'home' ? 'Tarihçe' : tab === 'states' ? 'Devletler' : tab === 'leaders' ? 'Liderler' : tab === 'art' ? 'Kültür' : 'Yarışma'}
+                     </button>
+                 ))}
+            </div>
+          </div>
+        </header>
+
+        {/* İçerik */}
+        <main className="p-6 md:p-8 flex-grow">
+          {activeTab === 'home' && renderHome()}
+          {activeTab === 'states' && renderStates()}
+          {activeTab === 'leaders' && renderLeaders()}
+          {activeTab === 'art' && renderArt()}
+          {activeTab === 'quiz' && <QuizSection />}
+        </main>
+
+        {/* Mobil Alt Navigasyon - Yüzen Tasarım */}
+        <nav className="fixed bottom-6 left-4 right-4 md:hidden z-40">
+           <div className="bg-gray-900/90 backdrop-blur-lg text-white rounded-2xl shadow-2xl shadow-gray-900/30 p-2 flex justify-between items-center border border-white/10">
+              <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={Book} label="Tarih" />
+              <div className="w-px h-8 bg-white/10"></div>
+              <NavBtn active={activeTab === 'states'} onClick={() => setActiveTab('states')} icon={Landmark} label="Devlet" />
+              <div className="w-px h-8 bg-white/10"></div>
+              <NavBtn active={activeTab === 'leaders'} onClick={() => setActiveTab('leaders')} icon={Crown} label="Lider" />
+              <div className="w-px h-8 bg-white/10"></div>
+              <NavBtn active={activeTab === 'art'} onClick={() => setActiveTab('art')} icon={Palette} label="Sanat" />
+              <div className="w-px h-8 bg-white/10"></div>
+              <NavBtn active={activeTab === 'quiz'} onClick={() => setActiveTab('quiz')} icon={HelpCircle} label="Quiz" />
+           </div>
+        </nav>
+
+      </div>
+
+      {/* --- MODALLAR --- */}
+
+      {/* Dönem Detay Modalı */}
+      <Modal 
+        isOpen={!!selectedPeriod} 
+        onClose={() => setSelectedPeriod(null)} 
+        title={selectedPeriod?.title}
+        gradient={selectedPeriod?.gradient || "from-gray-700 to-gray-900"}
+      >
+        <div className="space-y-8 pb-4">
+          <p className="text-lg text-gray-700 font-medium leading-relaxed border-l-4 border-amber-400 pl-4 py-1">
+            {selectedPeriod?.shortDesc}
+          </p>
+
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+            <h4 className="flex items-center gap-2 font-bold text-gray-900 mb-3">
+              <div className="p-1.5 bg-red-100 text-red-600 rounded-lg"><Sword size={18} /></div>
+              Askeri Yapı
+            </h4>
+            <p className="text-sm text-gray-600 leading-relaxed">{selectedPeriod?.details?.military}</p>
+          </div>
+
+           {selectedPeriod?.details?.governance && (
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+              <h4 className="flex items-center gap-2 font-bold text-gray-900 mb-3">
+                <div className="p-1.5 bg-indigo-100 text-indigo-600 rounded-lg"><Scale size={18} /></div>
+                Yönetim ve Siyaset
+              </h4>
+              <p className="text-sm text-gray-600 leading-relaxed">{selectedPeriod?.details?.governance}</p>
+            </div>
+          )}
+
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+            <h4 className="flex items-center gap-2 font-bold text-gray-900 mb-3">
+              <div className="p-1.5 bg-teal-100 text-teal-600 rounded-lg"><Book size={18} /></div>
+              Kültür ve Medeniyet
+            </h4>
+            <p className="text-sm text-gray-600 leading-relaxed">{selectedPeriod?.details?.culture}</p>
+          </div>
+
+          {selectedPeriod?.details?.states && (
+            <div>
+               <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2"><Map size={16} className="text-gray-400"/> Kurulan Devletler / Dönemler</h4>
+               <div className="flex flex-wrap gap-2">
+                 {selectedPeriod.details.states.map((s, i) => (
+                   <span key={i} className="text-xs font-semibold bg-slate-200/60 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200">{s}</span>
+                 ))}
+               </div>
+            </div>
+          )}
+          
+          <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-sm text-amber-900 flex gap-3">
+            <Sparkles className="shrink-0 text-amber-500" size={20} />
+            <div>
+               <strong className="block mb-1 text-amber-700">Dönemin Önemi</strong>
+               {selectedPeriod?.details?.importance}
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Lider Detay Modalı */}
+      <Modal 
+        isOpen={!!selectedLeader} 
+        onClose={() => setSelectedLeader(null)} 
+        title={selectedLeader?.name}
+        gradient={selectedLeader?.gradient || "from-gray-800 to-black"}
+      >
+        <div className="flex flex-col items-center mb-8 relative">
+          <div className={`absolute inset-0 bg-gradient-to-b ${selectedLeader?.gradient} opacity-5 blur-3xl rounded-full`}></div>
+          <div className={`w-28 h-28 rounded-3xl bg-gradient-to-br ${selectedLeader?.gradient} flex items-center justify-center text-5xl shadow-xl shadow-gray-300 ring-8 ring-white mb-4 z-10 transform -rotate-3`}>
+             {selectedLeader?.imgSymbol}
+          </div>
+          <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-bold text-xs tracking-wider uppercase mb-1">{selectedLeader?.title}</span>
+          <span className="text-gray-400 text-sm font-medium">{selectedLeader?.dates}</span>
+        </div>
+        
+        <div className="prose prose-sm prose-stone mx-auto">
+           <p className="text-gray-700 leading-relaxed text-center font-medium text-lg">
+             {selectedLeader?.desc}
+           </p>
+        </div>
+
+        <div className="mt-8 flex justify-center opacity-20">
+          <KayiSymbol className="text-gray-900 w-16 h-16" />
+        </div>
+      </Modal>
+
+    </div>
+  );
+}
