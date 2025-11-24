@@ -149,7 +149,7 @@
                     <button onclick="nextSong()" class="hover:text-amber-400"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
                 </div>
                 
-                <audio id="bg-audio"></audio>
+                <audio id="bg-audio" preload="none"></audio>
             </div>
 
             <!-- Floating Button -->
@@ -487,20 +487,21 @@
             const icon = document.getElementById('play-icon');
             const eq = document.getElementById('equalizer');
             const fab = document.getElementById('music-fab');
-            const coverIcon = document.querySelector('#music-cover i');
+            const coverIcon = document.querySelector('#music-cover svg') || document.querySelector('#music-cover i');
 
             if (audio.paused) {
-                audio.play();
-                icon.setAttribute('data-lucide', 'pause');
-                // Icon güncellemesi için re-render gerekebilir ama manuel attribute değişimi hızlıdır
-                // Lucide yeniden tarama yerine innerHTML değişimi daha iyi olabilir
-                document.querySelector('#play-icon').innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"></path>'; // Pause SVG path manuel
-                
-                eq.classList.remove('hidden');
-                eq.classList.add('flex');
-                fab.classList.add('music-playing');
-                coverIcon.classList.add('animate-spin');
-                isPlaying = true;
+                audio.play().then(() => {
+                    // Simgeyi duraklat olarak değiştir
+                    document.querySelector('#play-icon').innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"></path>'; 
+                    eq.classList.remove('hidden');
+                    eq.classList.add('flex');
+                    fab.classList.add('music-playing');
+                    if(coverIcon) coverIcon.classList.add('animate-spin');
+                    isPlaying = true;
+                }).catch(error => {
+                    console.error("Müzik oynatma hatası:", error);
+                    alert("Müzik oynatılamadı. Lütfen ses dosyasını kontrol edin veya tarayıcı izinlerini gözden geçirin.");
+                });
             } else {
                 audio.pause();
                 document.querySelector('#play-icon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'; // Play SVG path
@@ -508,7 +509,7 @@
                 eq.classList.add('hidden');
                 eq.classList.remove('flex');
                 fab.classList.remove('music-playing');
-                coverIcon.classList.remove('animate-spin');
+                if(coverIcon) coverIcon.classList.remove('animate-spin');
                 isPlaying = false;
             }
             
@@ -526,11 +527,12 @@
             
             // Direkt çal
             const audioEl = document.getElementById('bg-audio');
-            if(audioEl.paused) togglePlay(); // Eğer duruyorsa başlat, zaten çalıyorsa devam et (src değiştiği için otomatik başlar genelde ama togglePlay UI günceller)
-            else audioEl.play(); // Zaten çalıyorsa sadece yeni kaynağı oynat
+            if(audioEl.paused) togglePlay(); 
+            else {
+                 audioEl.play().catch(e => console.error("Oynatma hatası:", e));
+            }
             
             // Toggle play fonksiyonu UI senkronizasyonu için önemli, manuel set edelim
-            const icon = document.getElementById('play-icon');
             const eq = document.getElementById('equalizer');
             const fab = document.getElementById('music-fab');
             
@@ -581,10 +583,6 @@
 
         // --- SAYFA RENDERLARI (HTML Stringler) ---
         
-        // ... (Diğer render fonksiyonları yukarıdaki orijinal kod ile aynı kalacak: renderHome, renderStates, renderLeaders, renderMythology, renderArt, renderQuiz) ...
-        // Kod tekrarı olmaması için burayı kısa tutuyorum, yukarıdaki tam fonksiyonları kullanın.
-        // Ancak tek dosya bütünlüğü için aşağıya kopyalıyorum.
-
         function renderHome(container) {
             let html = `
                 <div class="space-y-8 animate-fade-in">
