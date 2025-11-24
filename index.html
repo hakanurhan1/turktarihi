@@ -8,14 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Fonts -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4 { font-family: 'Merriweather', serif; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
         
         /* Animasyonlar */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -23,6 +22,8 @@
         
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .animate-slide-up { animation: slideUp 0.5s ease-out; }
+
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); }
     </style>
 </head>
 <body class="bg-slate-50 text-gray-800 selection:bg-red-100 selection:text-red-900 min-h-screen">
@@ -54,10 +55,11 @@
                 </div>
                 
                 <!-- Desktop Nav -->
-                <div class="hidden md:flex gap-2">
+                <div class="hidden md:flex gap-1">
                     <button onclick="renderTab('home')" class="nav-btn-desktop px-3 py-2 rounded-xl text-xs font-bold transition-all hover:bg-gray-100 text-gray-500" data-tab="home">Tarihçe</button>
                     <button onclick="renderTab('states')" class="nav-btn-desktop px-3 py-2 rounded-xl text-xs font-bold transition-all hover:bg-gray-100 text-gray-500" data-tab="states">Devletler</button>
                     <button onclick="renderTab('leaders')" class="nav-btn-desktop px-3 py-2 rounded-xl text-xs font-bold transition-all hover:bg-gray-100 text-gray-500" data-tab="leaders">Liderler</button>
+                    <button onclick="renderTab('mythology')" class="nav-btn-desktop px-3 py-2 rounded-xl text-xs font-bold transition-all hover:bg-gray-100 text-gray-500" data-tab="mythology">Mitoloji</button>
                     <button onclick="renderTab('art')" class="nav-btn-desktop px-3 py-2 rounded-xl text-xs font-bold transition-all hover:bg-gray-100 text-gray-500" data-tab="art">Kültür</button>
                     <button onclick="renderTab('quiz')" class="nav-btn-desktop px-3 py-2 rounded-xl text-xs font-bold transition-all hover:bg-gray-100 text-gray-500" data-tab="quiz">Yarışma</button>
                 </div>
@@ -65,31 +67,30 @@
         </header>
 
         <!-- İçerik Alanı -->
-        <main id="main-content" class="p-6 md:p-8 flex-grow pb-24">
+        <main id="main-content" class="p-6 md:p-8 flex-grow pb-28">
             <!-- İçerik JS ile buraya doldurulacak -->
         </main>
 
         <!-- Mobil Alt Navigasyon -->
-        <nav class="fixed bottom-6 left-4 right-4 md:hidden z-40">
-            <div class="bg-gray-900/90 backdrop-blur-lg text-white rounded-2xl shadow-2xl shadow-gray-900/30 p-2 flex justify-between items-center border border-white/10">
-                <button onclick="renderTab('home')" class="nav-btn-mobile flex flex-col items-center justify-center w-full h-full py-2" data-tab="home">
-                    <i data-lucide="book" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Tarih</span>
+        <nav class="fixed bottom-4 left-4 right-4 md:hidden z-40">
+            <div class="bg-gray-900/95 backdrop-blur-lg text-white rounded-2xl shadow-2xl shadow-gray-900/40 p-1 flex justify-between items-center border border-white/10 overflow-x-auto">
+                <button onclick="renderTab('home')" class="nav-btn-mobile flex flex-col items-center justify-center min-w-[60px] h-14 rounded-xl transition-colors" data-tab="home">
+                    <i data-lucide="book" class="w-5 h-5 mb-0.5"></i><span class="text-[9px] font-bold">Tarih</span>
                 </button>
-                <div class="w-px h-8 bg-white/10"></div>
-                <button onclick="renderTab('states')" class="nav-btn-mobile flex flex-col items-center justify-center w-full h-full py-2" data-tab="states">
-                    <i data-lucide="landmark" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Devlet</span>
+                <button onclick="renderTab('states')" class="nav-btn-mobile flex flex-col items-center justify-center min-w-[60px] h-14 rounded-xl transition-colors" data-tab="states">
+                    <i data-lucide="landmark" class="w-5 h-5 mb-0.5"></i><span class="text-[9px] font-bold">Devlet</span>
                 </button>
-                <div class="w-px h-8 bg-white/10"></div>
-                <button onclick="renderTab('leaders')" class="nav-btn-mobile flex flex-col items-center justify-center w-full h-full py-2" data-tab="leaders">
-                    <i data-lucide="crown" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Lider</span>
+                <button onclick="renderTab('leaders')" class="nav-btn-mobile flex flex-col items-center justify-center min-w-[60px] h-14 rounded-xl transition-colors" data-tab="leaders">
+                    <i data-lucide="crown" class="w-5 h-5 mb-0.5"></i><span class="text-[9px] font-bold">Lider</span>
                 </button>
-                <div class="w-px h-8 bg-white/10"></div>
-                <button onclick="renderTab('art')" class="nav-btn-mobile flex flex-col items-center justify-center w-full h-full py-2" data-tab="art">
-                    <i data-lucide="palette" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Sanat</span>
+                <button onclick="renderTab('mythology')" class="nav-btn-mobile flex flex-col items-center justify-center min-w-[60px] h-14 rounded-xl transition-colors" data-tab="mythology">
+                    <i data-lucide="moon" class="w-5 h-5 mb-0.5"></i><span class="text-[9px] font-bold">Mit</span>
                 </button>
-                <div class="w-px h-8 bg-white/10"></div>
-                <button onclick="renderTab('quiz')" class="nav-btn-mobile flex flex-col items-center justify-center w-full h-full py-2" data-tab="quiz">
-                    <i data-lucide="help-circle" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Quiz</span>
+                <button onclick="renderTab('art')" class="nav-btn-mobile flex flex-col items-center justify-center min-w-[60px] h-14 rounded-xl transition-colors" data-tab="art">
+                    <i data-lucide="palette" class="w-5 h-5 mb-0.5"></i><span class="text-[9px] font-bold">Sanat</span>
+                </button>
+                <button onclick="renderTab('quiz')" class="nav-btn-mobile flex flex-col items-center justify-center min-w-[60px] h-14 rounded-xl transition-colors" data-tab="quiz">
+                    <i data-lucide="help-circle" class="w-5 h-5 mb-0.5"></i><span class="text-[9px] font-bold">Quiz</span>
                 </button>
             </div>
         </nav>
@@ -102,7 +103,6 @@
             <!-- Modal Header -->
             <div id="modal-header" class="p-6 flex justify-between items-start text-white relative overflow-hidden shrink-0">
                 <div class="absolute top-0 right-0 p-4 opacity-20 transform translate-x-4 -translate-y-4">
-                    <!-- Kayı Sembolü -->
                     <div class="flex gap-1.5 items-center justify-center font-serif font-bold text-white select-none">
                         <div class="w-1.5 h-8 bg-current rounded-full"></div>
                         <div class="w-1.5 h-5 bg-current rounded-full rotate-45 origin-bottom"></div>
@@ -131,7 +131,6 @@
         </div>
     </div>
 
-    <!-- --- JAVASCRIPT --- -->
     <script>
         // --- VERİ SETLERİ ---
         const historicQuotes = [
@@ -145,6 +144,23 @@
             { text: "Ey Türk Gençliği! Birinci vazifen, Türk istiklâlini, Türk Cumhuriyetini, ilelebet, muhafaza ve müdafaa etmektir.", author: "Mustafa Kemal Atatürk" }
         ];
 
+        // MİTOLOJİ VERİLERİ
+        const mythGods = [
+            { name: "Gök Tanrı (Tengri)", role: "Baş Tanrı", desc: "Her şeyin yaratıcısı, göğün hakimi. Tek ve mutlak güçtür. Mavi gök ile özdeşleşir.", color: "from-sky-500 to-blue-700", icon: "sun" },
+            { name: "Umay Ana", role: "Doğum ve Bereket", desc: "Çocukları ve hayvan yavrularını koruyan tanrıça. Şefkatin sembolüdür.", color: "from-rose-400 to-pink-600", icon: "heart" },
+            { name: "Erlik Han", role: "Yeraltı Tanrısı", desc: "Kötülüğün, karanlığın ve yeraltı dünyasının (Tamu) efendisi.", color: "from-slate-800 to-black", icon: "ghost" },
+            { name: "Kayra Han", role: "İyilik Tanrısı", desc: "Göğün 17. katında oturan, evrenin düzenini sağlayan ulu tanrı.", color: "from-amber-300 to-yellow-500", icon: "star" },
+            { name: "Ülgen", role: "Merhamet Tanrısı", desc: "İyilik yapanları korur, gökyüzü olaylarını yönetir.", color: "from-indigo-400 to-purple-600", icon: "cloud" }
+        ];
+
+        const mythCreatures = [
+            { name: "Tulpar", desc: "Kanatlı efsanevi at. Yiğitleri her yere yetiştirir.", type: "İyilik" },
+            { name: "Asena (Bozkurt)", desc: "Türklerin türeyiş destanındaki dişi kurt ve rehber.", type: "Rehber" },
+            { name: "Tepegöz", desc: "Tek gözlü dev. Dede Korkut hikayelerinde geçer.", type: "Kötülük" },
+            { name: "Simurg (Anka)", desc: "Bilgi ağacında yaşayan efsanevi kuş.", type: "Bilgelik" },
+            { name: "Şahmeran", desc: "Yılanların şahı, hikmet sahibi varlık.", type: "Bilgelik" }
+        ];
+
         const periods = [
             {
                 id: 1, title: "Orta Asya ve İslam Öncesi", years: "M.Ö. 220 - M.S. 940",
@@ -153,7 +169,6 @@
                     military: "Mete Han tarafından kurulan 'Onlu Sistem' günümüz kara kuvvetlerinin temelidir. 'Turan Taktiği' (Sahte Ricat/Hilal) ile sayıca üstün ordular yenilmiştir.",
                     governance: "Devlet 'İkili Teşkilat' (Doğu-Batı) ile yönetilirdi. Kut İnancı hakimdi. Kararlar 'Toy'da (Kurultay) alınırdı.",
                     culture: "Şamanizm (Gök Tanrı) inancı doğa ile iç içeydi. Yuğ törenleri yapılırdı. Pazırık Halısı bu dönemin en önemli sanat eseridir. Göçebe yaşam tarzı kilim motiflerine yansımıştır.",
-                    states: ["Asya Hun", "Avrupa Hun", "I. ve II. Göktürk", "Uygur", "Hazarlar"],
                     importance: "Kavimler Göçü'nü başlatarak Avrupa'nın etnik yapısını değiştirdiler. Halı dokumacılığı ve demir işlemeciliğinde zirveye çıktılar."
                 },
                 gradient: "from-teal-600 to-teal-800"
@@ -165,7 +180,6 @@
                     military: "Talas Savaşı (751) ile Türk-Arap yakınlaşması başladı. Gulam sistemi ve İkta sistemi uygulandı. 1071 Malazgirt Zaferi ile Anadolu'nun kapıları Türklere açıldı.",
                     governance: "Hükümdarlar 'Sultan' veya 'Han' unvanı kullandı. Şeri ve Örfi hukuk bir arada uygulandı.",
                     culture: "Karahanlılar döneminde ilk Türk-İslam eserleri verildi (Kutadgu Bilig, Divan-ı Lügati't-Türk). Nizamiye Medreseleri kuruldu.",
-                    states: ["Karahanlılar", "Gazneliler", "Büyük Selçuklu", "Anadolu Selçuklu", "Harzemşahlar"],
                     importance: "Türk kültürü ile İslam medeniyeti sentezlendi. Haçlı Seferlerine karşı İslam dünyası korundu."
                 },
                 gradient: "from-blue-600 to-blue-900"
@@ -177,7 +191,6 @@
                     military: "Yeniçeri Ocağı ve Tımar sistemi. Fatih döneminde 'Şahi' topları döküldü.",
                     governance: "Mutlak monarşi. Divan-ı Hümayun. 'Millet Sistemi' ile hoşgörü politikası.",
                     culture: "Mimar Sinan eserleri (Selimiye, Süleymaniye). Divan edebiyatı, Hat, Tezhip ve Minyatür.",
-                    states: ["Kuruluş", "Yükselme", "Duraklama", "Gerileme", "Dağılma"],
                     importance: "İstanbul'un fethi ile Orta Çağ kapandı. Halifelik Türklere geçti."
                 },
                 gradient: "from-red-700 to-rose-900"
@@ -189,7 +202,6 @@
                     military: "Düzenli Ordu, NATO üyeliği, Modern Savunma Sanayii (İHA/SİHA).",
                     governance: "Egemenlik kayıtsız şartsız milletindir. Cumhuriyet rejimi. Demokrasi.",
                     culture: "Harf İnkılabı, Medeni Kanun, Tevhid-i Tedrisat.",
-                    states: ["Tek Parti Dönemi", "Çok Partili Dönem", "2000'ler ve Yeni Türkiye"],
                     importance: "Emperyalizme karşı kazanılan Kurtuluş Savaşı, sömürge altındaki milletlere örnek olmuştur."
                 },
                 gradient: "from-red-500 to-red-700"
@@ -206,6 +218,10 @@
             { name: "Karahanlılar", founder: "Bilge Kül Kadir", capital: "Balasagun", dates: "840 - 1212", desc: "İlk Müslüman Türk devleti.", color: "bg-emerald-700", flagColor: "text-emerald-700" },
             { name: "Gazneliler", founder: "Alp Tigin", capital: "Gazne", dates: "962 - 1187", desc: "Hindistan'a İslamiyet'i yaydılar.", color: "bg-green-800", flagColor: "text-green-800" },
             { name: "Büyük Selçuklu", founder: "Tuğrul Bey", capital: "Nişapur", dates: "1040 - 1157", desc: "Anadolu'nun kapılarını açtılar.", color: "bg-teal-700", flagColor: "text-teal-700" },
+            { name: "Harzemşahlar", founder: "İl Arslan", capital: "Gürgenç", dates: "1097 - 1231", desc: "Moğol istilasıyla yıkıldılar.", color: "bg-indigo-600", flagColor: "text-indigo-600" },
+            { name: "Altınordu", founder: "Batu Han", capital: "Saray", dates: "1236 - 1502", desc: "Karadeniz kuzeyindeki Türk-Moğol devleti.", color: "bg-yellow-700", flagColor: "text-yellow-700" },
+            { name: "Timur İmparatorluğu", founder: "Timur", capital: "Semerkant", dates: "1370 - 1507", desc: "Orta Asya'nın bilim merkezi.", color: "bg-blue-900", flagColor: "text-blue-900" },
+            { name: "Babür İmparatorluğu", founder: "Babür Şah", capital: "Agra", dates: "1526 - 1858", desc: "Hindistan'daki son büyük Türk devleti.", color: "bg-purple-700", flagColor: "text-purple-700" },
             { name: "Osmanlı İmparatorluğu", founder: "Osman Bey", capital: "İstanbul", dates: "1299 - 1922", desc: "600 yıllık cihan devleti.", color: "bg-red-700", flagColor: "text-red-700" },
         ];
 
@@ -217,16 +233,46 @@
             { name: "Fatih Sultan Mehmet", title: "Osmanlı", dates: "1432-1481", desc: "İstanbul Fatihi.", imgSymbol: "🏰", gradient: "from-red-500 to-rose-700", category: "ruler" },
             { name: "Kanuni Sultan Süleyman", title: "Osmanlı", dates: "1494-1566", desc: "Muhteşem Süleyman.", imgSymbol: "👑", gradient: "from-purple-500 to-indigo-700", category: "ruler" },
             { name: "M. Kemal Atatürk", title: "Türkiye Cum.", dates: "1881-193∞", desc: "Cumhuriyetimizin Kurucusu.", imgSymbol: "🇹🇷", gradient: "from-red-600 to-red-800", category: "ruler" },
+            { name: "Vezir Tonyukuk", title: "Göktürk", dates: "646-726", desc: "Türklerin ilk veziri ve bilgesi.", imgSymbol: "🗿", gradient: "from-stone-400 to-stone-600", category: "scholar" },
+            { name: "Kaşgarlı Mahmut", title: "Dil Bilimci", dates: "11. YY", desc: "Divan-ı Lügati't-Türk yazarı.", imgSymbol: "📖", gradient: "from-amber-500 to-orange-600", category: "scholar" },
             { name: "Mimar Sinan", title: "Baş Mimar", dates: "1489-1588", desc: "Osmanlı'nın baş mimarı.", imgSymbol: "🏛️", gradient: "from-stone-300 to-stone-500", category: "scholar" },
             { name: "İbn-i Sina", title: "Tıp Alimi", dates: "980-1037", desc: "Tıbbın babası (Avicenna).", imgSymbol: "🩺", gradient: "from-emerald-400 to-green-600", category: "scholar" },
+            { name: "Kültigin", title: "Göktürk Komutanı", dates: "684-731", desc: "Efsanevi Göktürk komutanı.", imgSymbol: "⚔️", gradient: "from-gray-600 to-gray-800", category: "hero" },
+            { name: "Seyit Onbaşı", title: "Çanakkale", dates: "1889-1939", desc: "Çanakkale kahramanı.", imgSymbol: "💪", gradient: "from-stone-500 to-amber-700", category: "hero" },
+            { name: "Nene Hatun", title: "Milli Mücadele", dates: "1857-1955", desc: "Erzurum savunmasının simgesi.", imgSymbol: "🧣", gradient: "from-red-400 to-red-600", category: "hero" }
         ];
 
         const epics = [
-            { name: "Oğuz Kağan", desc: "Türklerin atası Oğuz Han'ın doğumu ve yaşamı.", color: "bg-amber-100 text-amber-800 border-amber-200" },
-            { name: "Ergenekon", desc: "Demir dağın eritilip yeniden doğuş.", color: "bg-slate-100 text-slate-800 border-slate-200" },
-            { name: "Türeyiş", desc: "Uygurların kökeni efsanesi.", color: "bg-blue-100 text-blue-800 border-blue-200" },
-            { name: "Manas", desc: "Dünyanın en uzun destanı.", color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
-            { name: "Dede Korkut", desc: "Oğuzların hikayeleri.", color: "bg-orange-100 text-orange-800 border-orange-200" }
+            { 
+                name: "Oğuz Kağan", 
+                desc: "Türklerin atası Oğuz Han'ın doğumu ve yaşamı.", 
+                details: "Oğuz Kağan Destanı, Türklerin atası kabul edilen Oğuz Han'ın doğumunu, büyümesini, üstün yeteneklerini ve yaptığı fetihleri anlatır. Destana göre Oğuz Kağan doğar doğmaz konuşmuş, annesinden bir kez süt emip bir daha emmemiştir. Kısa sürede büyüyüp bir kahraman olmuştur. Ormandaki canavarı öldürmüş, gökten inen bir ışığın içindeki kızla ve ağaç kovuğundaki bir kızla evlenmiştir. Bu evliliklerden 6 oğlu olmuştur: Gün, Ay, Yıldız (Bozoklar) ve Gök, Dağ, Deniz (Üçoklar). Ülkeyi oğulları arasında paylaştırmıştır.",
+                color: "border-amber-200 bg-amber-50 text-amber-900" 
+            },
+            { 
+                name: "Ergenekon", 
+                desc: "Demir dağın eritilip yeniden doğuş.", 
+                details: "Ergenekon Destanı, Göktürklerin yeniden doğuşunu anlatır. Düşmanları tarafından hileyle yenilen Türklerden sadece iki aile (Kıyan ve Nüküz) sağ kalır. Sarp dağların arasında, Ergenekon denilen verimli bir vadiye sığınırlar. Burada 400 yıl kalıp çoğalırlar. Vadiye sığmaz olunca, atalarının demir madeni işlettiği dağı eriterek dışarı çıkarlar. Onlara Börteçine adında bir Bozkurt yol gösterir. Bu çıkış günü, Nevruz (Yeni Gün) olarak kutlanır.",
+                color: "border-slate-200 bg-slate-50 text-slate-900" 
+            },
+            { 
+                name: "Türeyiş", 
+                desc: "Uygurların kökeni efsanesi.", 
+                details: "Türeyiş Destanı, Uygur Türklerinin kökenini anlatır. Hakanın dünyalar güzeli iki kızı vardır ve Hakan onları ancak bir Tanrı ile evlendirebileceğini düşünür. Kızlarını bir kuleye kapatır. Gök Tanrı, bir Bozkurt kılığında kuleye gelir ve kızlarla evlenir. Bu evlilikten doğan çocuklar Uygur halkının atası olur. Dokuz Oğuz - On Uygur boylarının bu şekilde türediğine inanılır.",
+                color: "border-blue-200 bg-blue-50 text-blue-900" 
+            },
+            { 
+                name: "Manas", 
+                desc: "Dünyanın en uzun destanı.", 
+                details: "Kırgız Türklerine ait olan Manas Destanı, 500.000 beyiti aşan uzunluğuyla dünyanın en uzun destanıdır ve hala yaşayan (anlatılan) bir destandır. Kahraman Manas'ın Kırgızları birleştirmesi, düşmanlarla savaşları, Çin'e karşı mücadeleleri ve oğlu Semetey ile torunu Seytek'in hikayeleri anlatılır. Kırgızların ansiklopedisi niteliğindedir; örf, adet ve inançlarını barındırır.",
+                color: "border-emerald-200 bg-emerald-50 text-emerald-900" 
+            },
+            { 
+                name: "Dede Korkut", 
+                desc: "Oğuzların hikayeleri.", 
+                details: "Dede Korkut Hikayeleri (Kitab-ı Dede Korkut), Oğuz Türklerinin Anadolu ve Azerbaycan coğrafyasındaki yaşantılarını, inançlarını, kahramanlıklarını anlatan 12 hikaye ve bir önsözden oluşur. Dede Korkut, bu hikayelerin anlatıcısı olan bilge bir ozandır. Hikayelerde Deli Dumrul, Boğaç Han, Bamsı Beyrek gibi unutulmaz karakterler ve Tepegöz gibi olağanüstü varlıklar yer alır. Türkçenin en güzel örneklerindendir.",
+                color: "border-orange-200 bg-orange-50 text-orange-900" 
+            }
         ];
 
         const quizQuestions = [
@@ -237,9 +283,24 @@
             { q: "İlk yerleşik hayata geçen Türk devleti?", opts: ["Hunlar", "Göktürkler", "Uygurlar", "Selçuklular"], a: 2 }
         ];
 
+        // --- SVG HELPER FUNCTIONS ---
+        function getMotifGeyik() {
+            return `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M30 70 L50 70 L50 40 L30 40 Z" fill="currentColor"/><path d="M50 40 L70 20 M50 40 L30 20" stroke="currentColor" stroke-width="6"/><path d="M70 20 L80 30 M70 20 L80 10 M30 20 L20 30 M30 20 L20 10" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="50" r="3" fill="white"/></svg>`;
+        }
+        function getMotifEliBelinde() {
+            return `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M50 20 L70 40 L50 60 L30 40 Z" fill="currentColor" opacity="0.8"/><path d="M30 40 L10 20 M70 40 L90 20 M50 60 L50 90" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="30" r="5" fill="white"/></svg>`;
+        }
+        function getMotifKocBoynuzu() {
+            return `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M20 40 C20 10, 50 10, 50 40 C50 70, 80 70, 80 40" stroke="currentColor" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M20 60 C20 90, 50 90, 50 60 C50 30, 80 30, 80 60" stroke="currentColor" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.6"/></svg>`;
+        }
+        function getMotifHayatAgaci() {
+            return `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M50 90 L50 10" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><path d="M50 70 L80 50 M50 50 L80 30 M50 70 L20 50 M50 50 L20 30" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><circle cx="50" cy="10" r="6" fill="currentColor"/><circle cx="80" cy="50" r="4" fill="currentColor" opacity="0.6"/><circle cx="20" cy="50" r="4" fill="currentColor" opacity="0.6"/></svg>`;
+        }
+
         // --- STATE VE LOGIC ---
         let activeTab = 'home';
         let leaderCategory = 'all';
+        let searchTerm = '';
         let dailyQuote = {};
         let quizState = { current: 0, score: 0, finished: false, selected: null };
 
@@ -252,6 +313,7 @@
         // --- RENDER FONKSİYONLARI ---
         function renderTab(tabName) {
             activeTab = tabName;
+            searchTerm = ''; // Tab değişince aramayı sıfırla
             
             // Buton Aktiflik Durumları
             document.querySelectorAll('.nav-btn-desktop').forEach(btn => {
@@ -266,10 +328,10 @@
 
             document.querySelectorAll('.nav-btn-mobile').forEach(btn => {
                 if(btn.dataset.tab === tabName) {
-                    btn.classList.add('text-amber-400');
+                    btn.classList.add('text-amber-400', 'scale-110');
                     btn.classList.remove('text-white');
                 } else {
-                    btn.classList.remove('text-amber-400');
+                    btn.classList.remove('text-amber-400', 'scale-110');
                     btn.classList.add('text-white');
                 }
             });
@@ -284,11 +346,39 @@
             if (activeTab === 'home') renderHome(main);
             else if (activeTab === 'states') renderStates(main);
             else if (activeTab === 'leaders') renderLeaders(main);
+            else if (activeTab === 'mythology') renderMythology(main);
             else if (activeTab === 'art') renderArt(main);
             else if (activeTab === 'quiz') renderQuiz(main);
 
             lucide.createIcons();
         }
+
+        // --- SEARCH & FILTER HANDLERS ---
+        function handleSearch(value, type) {
+            searchTerm = value;
+            if (type === 'states') {
+                updateStatesGrid();
+            } else if (type === 'leaders') {
+                updateLeadersGrid();
+            }
+        }
+
+        function setCategory(cat) {
+            leaderCategory = cat;
+            updateLeadersGrid();
+            // Buton stillerini güncelle
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.dataset.cat === cat) {
+                    btn.classList.add('bg-gray-800', 'text-white', 'shadow-lg');
+                    btn.classList.remove('bg-white', 'text-gray-600');
+                } else {
+                    btn.classList.remove('bg-gray-800', 'text-white', 'shadow-lg');
+                    btn.classList.add('bg-white', 'text-gray-600');
+                }
+            });
+        }
+
+        // --- SAYFA RENDERLARI ---
 
         function renderHome(container) {
             let html = `
@@ -347,10 +437,16 @@
                     <div>
                         <h2 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2"><div class="p-1.5 bg-teal-100 rounded-md text-teal-700"><i data-lucide="scroll" class="w-5 h-5"></i></div> Destanlar</h2>
                         <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                            ${epics.map(epic => `
-                                <div class="min-w-[240px] p-5 rounded-2xl border ${epic.color} bg-white shadow-sm">
-                                    <h4 class="font-bold text-base">${epic.name} Destanı</h4>
+                            ${epics.map((epic, idx) => `
+                                <div onclick="openEpicModal(${idx})" class="min-w-[240px] p-5 rounded-2xl border ${epic.color} bg-white shadow-sm cursor-pointer hover:shadow-md transition-all group">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-bold text-base group-hover:opacity-80 transition-opacity">${epic.name} Destanı</h4>
+                                        <i data-lucide="book-open" class="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                                    </div>
                                     <p class="text-xs opacity-80 mt-2">${epic.desc}</p>
+                                    <div class="mt-3 text-[10px] font-bold opacity-60 flex items-center gap-1">
+                                        OKUMAK İÇİN TIKLA <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                    </div>
                                 </div>
                             `).join('')}
                         </div>
@@ -367,31 +463,21 @@
                         <span class="bg-indigo-100 text-indigo-700 p-2 rounded-lg"><i data-lucide="landmark" class="w-6 h-6"></i></span>
                         <h2 class="text-2xl font-bold text-gray-800">Türk Devletleri</h2>
                     </div>
-                    <p class="text-gray-600 text-sm mb-4">Tarih boyunca kurulan 16 büyük Türk devleti.</p>
                     
-                    <div class="grid grid-cols-1 gap-4">
-                        ${turkishStates.map(state => `
-                            <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition-all group">
-                                <div class="h-3 w-full ${state.color}"></div>
-                                <div class="p-5">
-                                    <div class="flex justify-between items-start mb-3">
-                                        <div>
-                                            <h3 class="font-bold text-lg ${state.flagColor} flex items-center gap-2"><i data-lucide="flag" class="w-4 h-4"></i> ${state.name}</h3>
-                                            <span class="text-xs font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded mt-1 inline-block">${state.dates}</span>
-                                        </div>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4 mb-3 text-sm">
-                                        <div><span class="text-gray-400 text-xs block">Kurucu</span><span class="font-semibold">${state.founder}</span></div>
-                                        <div><span class="text-gray-400 text-xs block">Başkent</span><span class="font-semibold">${state.capital}</span></div>
-                                    </div>
-                                    <p class="text-sm text-gray-600 border-t border-gray-100 pt-3 mt-2">${state.desc}</p>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <!-- Arama -->
+                    <div class="relative mb-6">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                        <input type="text" value="${searchTerm}" oninput="handleSearch(this.value, 'states')" class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 sm:text-sm shadow-sm transition-all" placeholder="Devlet, kurucu veya başkent ara...">
+                    </div>
+
+                    <div id="states-grid" class="grid grid-cols-1 gap-4">
+                        <!-- Grid içeriği JS ile dolacak -->
                     </div>
                     
-                    <!-- TR Özel Kart -->
-                    <div class="bg-gradient-to-br from-red-600 to-red-800 rounded-2xl p-6 text-white shadow-xl mt-6 relative overflow-hidden">
+                    <!-- TR Özel Kart (Sadece arama boşsa veya uygunsa gösterilecek) -->
+                    <div id="tr-card" class="bg-gradient-to-br from-red-600 to-red-800 rounded-2xl p-6 text-white shadow-xl mt-6 relative overflow-hidden">
                         <div class="absolute -right-6 -top-6 opacity-20 rotate-12"><i data-lucide="star" class="w-32 h-32"></i></div>
                         <div class="relative z-10">
                             <h3 class="text-2xl font-bold mb-2 flex items-center gap-2"><i data-lucide="star" class="w-6 h-6"></i> Türkiye Cumhuriyeti</h3>
@@ -405,10 +491,56 @@
                 </div>
             `;
             container.innerHTML = html;
+            updateStatesGrid(); 
+        }
+
+        function updateStatesGrid() {
+            const grid = document.getElementById('states-grid');
+            const trCard = document.getElementById('tr-card');
+            if(!grid) return;
+
+            const term = searchTerm.toLowerCase();
+            const filtered = turkishStates.filter(s => 
+                s.name.toLowerCase().includes(term) || 
+                s.founder.toLowerCase().includes(term) ||
+                s.capital.toLowerCase().includes(term)
+            );
+
+            if(trCard) {
+                if (term === '' || 'türkiye cumhuriyeti'.includes(term)) {
+                    trCard.style.display = 'block';
+                } else {
+                    trCard.style.display = 'none';
+                }
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="text-center p-8 text-gray-500 w-full bg-white/50 rounded-2xl border border-gray-100">Sonuç bulunamadı.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(state => `
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition-all group">
+                    <div class="h-3 w-full ${state.color}"></div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg ${state.flagColor} flex items-center gap-2"><i data-lucide="flag" class="w-4 h-4"></i> ${state.name}</h3>
+                                <span class="text-xs font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded mt-1 inline-block">${state.dates}</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-3 text-sm">
+                            <div><span class="text-gray-400 text-xs block">Kurucu</span><span class="font-semibold">${state.founder}</span></div>
+                            <div><span class="text-gray-400 text-xs block">Başkent</span><span class="font-semibold">${state.capital}</span></div>
+                        </div>
+                        <p class="text-sm text-gray-600 border-t border-gray-100 pt-3 mt-2">${state.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
         }
 
         function renderLeaders(container) {
-            // Kategori Filtreleme (Basit versiyon: Hepsini göster)
             let html = `
                 <div class="space-y-6 animate-slide-up">
                     <div class="flex flex-col gap-4">
@@ -416,21 +548,125 @@
                             <span class="bg-amber-100 text-amber-700 p-2 rounded-lg"><i data-lucide="crown" class="w-6 h-6"></i></span>
                             Önemli Şahsiyetler
                         </h2>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        ${leaders.map((leader, idx) => `
-                            <div onclick="openLeaderModal(${idx})" class="group bg-white rounded-3xl p-5 shadow-lg border border-slate-100 flex gap-5 items-center cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all relative overflow-hidden">
-                                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${leader.gradient} opacity-[0.07] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
-                                <div class="w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br ${leader.gradient} flex items-center justify-center text-3xl shadow-md text-white ring-4 ring-white">
-                                    ${leader.imgSymbol}
-                                </div>
-                                <div class="flex-1 relative z-10">
-                                    <h3 class="font-bold text-gray-900 text-lg leading-tight group-hover:text-red-700 transition-colors">${leader.name}</h3>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mt-1 mb-0.5">${leader.title}</span>
-                                </div>
-                                <i data-lucide="chevron-right" class="text-gray-300 group-hover:text-red-500"></i>
+                        
+                        <!-- Arama -->
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
                             </div>
-                        `).join('')}
+                            <input type="text" value="${searchTerm}" oninput="handleSearch(this.value, 'leaders')" class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 sm:text-sm shadow-sm transition-all" placeholder="Lider ismi ara...">
+                        </div>
+
+                        <!-- Kategoriler -->
+                        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                            <button onclick="setCategory('all')" class="cat-btn px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${leaderCategory === 'all' ? 'bg-gray-800 text-white shadow-lg' : 'bg-white text-gray-600 border border-gray-200'}" data-cat="all">Tümü</button>
+                            <button onclick="setCategory('ruler')" class="cat-btn px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${leaderCategory === 'ruler' ? 'bg-gray-800 text-white shadow-lg' : 'bg-white text-gray-600 border border-gray-200'}" data-cat="ruler">Hükümdarlar</button>
+                            <button onclick="setCategory('scholar')" class="cat-btn px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${leaderCategory === 'scholar' ? 'bg-gray-800 text-white shadow-lg' : 'bg-white text-gray-600 border border-gray-200'}" data-cat="scholar">Bilge & Alim</button>
+                            <button onclick="setCategory('hero')" class="cat-btn px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${leaderCategory === 'hero' ? 'bg-gray-800 text-white shadow-lg' : 'bg-white text-gray-600 border border-gray-200'}" data-cat="hero">Kahramanlar</button>
+                        </div>
+                    </div>
+                    <div id="leaders-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <!-- İçerik JS ile -->
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+            updateLeadersGrid();
+        }
+
+        function updateLeadersGrid() {
+            const grid = document.getElementById('leaders-grid');
+            if(!grid) return;
+
+            const term = searchTerm.toLowerCase();
+            const filtered = leaders.filter(l => {
+                const matchesCat = leaderCategory === 'all' || l.category === leaderCategory;
+                const matchesSearch = l.name.toLowerCase().includes(term) || l.title.toLowerCase().includes(term);
+                return matchesCat && matchesSearch;
+            });
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="text-center p-12 text-gray-400 w-full col-span-2">Sonuç bulunamadı.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map((leader, idx) => `
+                <div onclick="openLeaderModal('${leader.name}')" class="group bg-white rounded-3xl p-5 shadow-lg border border-slate-100 flex gap-5 items-center cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${leader.gradient} opacity-[0.07] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                    <div class="w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br ${leader.gradient} flex items-center justify-center text-3xl shadow-md text-white ring-4 ring-white">
+                        ${leader.imgSymbol}
+                    </div>
+                    <div class="flex-1 relative z-10">
+                        <h3 class="font-bold text-gray-900 text-lg leading-tight group-hover:text-red-700 transition-colors">${leader.name}</h3>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mt-1 mb-0.5">${leader.title}</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-gray-300 group-hover:text-red-500"></i>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderMythology(container) {
+            let html = `
+                <div class="space-y-8 animate-fade-in pb-20">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="bg-purple-100 text-purple-700 p-2 rounded-lg"><i data-lucide="moon" class="w-6 h-6"></i></span>
+                        <h2 class="text-2xl font-bold text-gray-800">Türk Mitolojisi</h2>
+                    </div>
+
+                    <!-- Kozmoloji -->
+                    <div class="bg-slate-900 rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden border border-slate-700">
+                        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+                        <h3 class="text-xl font-bold mb-4 relative z-10 flex items-center gap-2 text-purple-300"><i data-lucide="globe" class="w-5 h-5"></i> Üç Alem</h3>
+                        <div class="space-y-3 relative z-10">
+                            <div class="bg-sky-500/20 p-3 rounded-xl border border-sky-500/30">
+                                <h4 class="font-bold text-sky-300 text-sm">Uçmağ (Gök)</h4>
+                                <p class="text-xs text-sky-100">İyilerin gittiği yer. Gök Tanrı'nın mekanı.</p>
+                            </div>
+                            <div class="bg-emerald-500/20 p-3 rounded-xl border border-emerald-500/30">
+                                <h4 class="font-bold text-emerald-300 text-sm">Orta Dünya (Yer)</h4>
+                                <p class="text-xs text-emerald-100">İnsanların yaşadığı fiziksel alem.</p>
+                            </div>
+                            <div class="bg-red-900/40 p-3 rounded-xl border border-red-500/30">
+                                <h4 class="font-bold text-red-400 text-sm">Tamu (Yeraltı)</h4>
+                                <p class="text-xs text-red-200">Kötülerin gittiği, Erlik Han'ın hüküm sürdüğü yer.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tanrılar -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><i data-lucide="sun" class="w-5 h-5 text-amber-500"></i> Panteon</h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            ${mythGods.map(god => `
+                                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br ${god.color} flex items-center justify-center text-white shadow-md">
+                                        <i data-lucide="${god.icon}" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">${god.name}</h4>
+                                        <span class="text-xs font-bold text-purple-600 uppercase">${god.role}</span>
+                                        <p class="text-xs text-gray-500 mt-1">${god.desc}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Yaratıklar -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><i data-lucide="ghost" class="w-5 h-5 text-indigo-500"></i> Efsanevi Varlıklar</h3>
+                        <div class="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+                            ${mythCreatures.map(creature => `
+                                <div class="min-w-[200px] bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-bold text-gray-800">${creature.name}</h4>
+                                        <span class="text-[10px] bg-slate-100 px-2 py-1 rounded-full font-bold text-slate-500">${creature.type}</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 leading-relaxed">${creature.desc}</p>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
                 </div>
             `;
@@ -438,9 +674,6 @@
         }
 
         function renderArt(container) {
-            // SVG Motif Fonksiyonları (String olarak)
-            const svgGeyik = `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M30 70 L50 70 L50 40 L30 40 Z" fill="currentColor"/><path d="M50 40 L70 20 M50 40 L30 20" stroke="currentColor" stroke-width="6"/><path d="M70 20 L80 30 M70 20 L80 10 M30 20 L20 30 M30 20 L20 10" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="50" r="3" fill="white"/></svg>`;
-            
             let html = `
                 <div class="space-y-8 animate-fade-in">
                     <div class="flex items-center gap-2 mb-4">
@@ -450,7 +683,7 @@
 
                     <!-- Şamanizm -->
                     <div class="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-8 opacity-20 w-48 h-48 text-white">${svgGeyik}</div>
+                        <div class="absolute top-0 right-0 p-8 opacity-20 w-48 h-48 text-white">${getMotifGeyik()}</div>
                         <div class="relative z-10">
                             <div class="flex items-center gap-2 text-purple-300 mb-2 font-bold tracking-widest text-xs uppercase"><i data-lucide="tent" class="w-4 h-4"></i> Şamanizm</div>
                             <h3 class="text-2xl font-bold mb-3">Bozkırın Ruhu</h3>
@@ -468,17 +701,49 @@
                         <div class="bg-red-900 p-1 rounded-2xl shadow-lg relative overflow-hidden">
                             <div class="border-[6px] border-amber-600 rounded-xl bg-red-800 relative overflow-hidden h-64 md:h-80 group">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Pazyryk_carpet.jpg" alt="Pazırık" 
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                                     onerror="this.style.display='none'; document.getElementById('fallback-carpet').style.display='flex'"
                                      class="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105">
-                                <!-- Fallback if image fails -->
-                                <div class="hidden w-full h-full flex-col items-center justify-center p-6 text-center bg-red-900/80 backdrop-blur-md">
-                                    <i data-lucide="image-off" class="text-red-300 mb-2 w-8 h-8"></i>
-                                    <h4 class="text-white font-bold">Görsel Yüklenemedi</h4>
-                                    <p class="text-red-100 text-xs">Bağlantı sorunu.</p>
+                                <!-- Fallback -->
+                                <div id="fallback-carpet" class="hidden w-full h-full flex-col items-center justify-center p-6 text-center bg-red-900/80 backdrop-blur-md relative">
+                                    <div class="absolute inset-0 opacity-10 grid grid-cols-6 grid-rows-4 gap-2 p-2">
+                                        ${Array(12).fill(0).map(() => getMotifGeyik()).join('')}
+                                    </div>
+                                    <div class="z-10 flex flex-col items-center">
+                                        <i data-lucide="image-off" class="text-red-300 mb-2 w-8 h-8"></i>
+                                        <h4 class="text-white font-bold">Görsel Yüklenemedi</h4>
+                                        <p class="text-red-100 text-xs">Ancak motifler sanatsal olarak gösteriliyor.</p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="bg-white p-4 mt-1 rounded-b-xl">
                                 <p class="text-xs text-gray-600"><span class="font-bold text-red-800">Pazırık Halısı</span> (M.Ö. 3-5. yy). Dünyanın en eski düğümlü halısıdır.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Motifler -->
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><i data-lucide="feather" class="w-5 h-5 text-amber-600"></i> Motiflerin Dili</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-stone-100 flex flex-col items-center text-center hover:border-amber-200 transition-colors">
+                                <div class="w-16 h-16 text-red-500 mb-2">${getMotifEliBelinde()}</div>
+                                <span class="font-bold text-gray-800 text-sm">Eli Belinde</span>
+                                <span class="text-[10px] text-gray-500">Analık ve Bereket</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-stone-100 flex flex-col items-center text-center hover:border-amber-200 transition-colors">
+                                <div class="w-16 h-16 text-blue-600 mb-2">${getMotifKocBoynuzu()}</div>
+                                <span class="font-bold text-gray-800 text-sm">Koç Boynuzu</span>
+                                <span class="text-[10px] text-gray-500">Güç ve Yiğitlik</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-stone-100 flex flex-col items-center text-center hover:border-amber-200 transition-colors">
+                                <div class="w-16 h-16 text-green-600 mb-2">${getMotifHayatAgaci()}</div>
+                                <span class="font-bold text-gray-800 text-sm">Hayat Ağacı</span>
+                                <span class="text-[10px] text-gray-500">Ölümsüzlük</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-stone-100 flex flex-col items-center text-center hover:border-amber-200 transition-colors">
+                                <div class="w-16 h-16 text-amber-600 mb-2">${getMotifGeyik()}</div>
+                                <span class="font-bold text-gray-800 text-sm">Geyik</span>
+                                <span class="text-[10px] text-gray-500">Ruhani Rehber</span>
                             </div>
                         </div>
                     </div>
@@ -524,7 +789,6 @@
                             <div class="space-y-3">
                                 ${q.opts.map((opt, idx) => {
                                     let btnClass = "border-slate-100 text-gray-600 hover:border-teal-300 hover:bg-teal-50";
-                                    // Basitlik için stil class'ları tıklama anında JS ile değiştirilecek
                                     return `
                                         <button onclick="handleQuizAnswer(${idx}, this)" class="w-full text-left p-4 rounded-xl border-2 transition-all font-medium flex justify-between group bg-white ${btnClass}" ${quizState.selected !== null ? 'disabled' : ''}>
                                             <span>${opt}</span>
@@ -562,7 +826,7 @@
                 } else {
                     quizState.finished = true;
                 }
-                renderApp(); // Yeniden çiz
+                renderApp(); 
             }, 1000);
         }
 
@@ -592,8 +856,10 @@
             `, p.gradient);
         }
 
-        function openLeaderModal(idx) {
-            const l = leaders[idx];
+        function openLeaderModal(leaderName) {
+            const l = leaders.find(leader => leader.name === leaderName);
+            if (!l) return;
+            
             showModal(l.name, `
                 <div class="flex flex-col items-center mb-6">
                     <div class="w-24 h-24 rounded-3xl bg-gradient-to-br ${l.gradient} flex items-center justify-center text-5xl shadow-xl text-white mb-3">
@@ -604,6 +870,26 @@
                 </div>
                 <p class="text-gray-700 leading-relaxed text-center text-lg font-medium">${l.desc}</p>
             `, l.gradient);
+        }
+
+        function openEpicModal(idx) {
+            const epic = epics[idx];
+            // Destanlar için özel bir renk gradyanı kullanalım
+            const gradient = "from-indigo-900 to-purple-900";
+            
+            showModal(epic.name + " Destanı", `
+                <div class="flex flex-col items-center">
+                    <div class="bg-amber-50 p-4 rounded-2xl border-l-4 border-amber-500 mb-6 w-full">
+                        <p class="text-amber-900 font-serif italic text-center">"${epic.desc}"</p>
+                    </div>
+                    <div class="prose prose-sm prose-stone text-gray-700 leading-relaxed text-justify">
+                        <p>${epic.details}</p>
+                    </div>
+                    <div class="mt-6 flex gap-2 text-xs text-gray-400">
+                        <span class="flex items-center gap-1"><i data-lucide="book-open" class="w-3 h-3"></i> Türk Mitolojisi</span>
+                    </div>
+                </div>
+            `, gradient);
         }
 
         function showModal(title, contentHtml, gradientClass = "from-gray-700 to-gray-900") {
@@ -619,7 +905,6 @@
 
             // Göster
             overlay.classList.remove('hidden');
-            // Animasyon için küçük gecikme
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
                 document.getElementById('modal-content').classList.remove('scale-95');
